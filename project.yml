@@ -1,0 +1,31 @@
+# Проект Xcode генерируется из этого файла: `xcodegen generate` (сам .xcodeproj в git не лежит).
+# Пробное приложение Э0 (MF-87, часть MF-86): воспроизведение нашего HLS в AVPlayer и вход по коду.
+name: DodocastTV
+options:
+  bundleIdPrefix: com.dodocast
+  deploymentTarget:
+    tvOS: "17.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  DodocastTV:
+    type: application
+    platform: tvOS
+    sources: [Sources]
+    scheme: {}
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: dodocast Э0
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UIUserInterfaceStyle: Automatic
+    settings:
+      base:
+        # Отдельный идентификатор под спайк: бесплатная команда Apple закрепляет его за собой.
+        PRODUCT_BUNDLE_IDENTIFIER: com.dodocast.tv.spike
+        GENERATE_INFOPLIST_FILE: NO
