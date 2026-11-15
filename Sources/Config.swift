@@ -13,6 +13,7 @@ enum Config {
         TestItem(kind: .media, code: "tF3ACeXqs5", note: "без шифрования, Sintel, 10 дорожек субтитров"),
         TestItem(kind: .media, code: "9OtqBwqSF9", note: "без шифрования, 3 главы, до 1080p"),
         TestItem(kind: .media, code: "BTP7eiD3Kw", note: "без шифрования, 2 дорожки субтитров, 2,5 ч"),
+        TestItem(kind: .media, code: "0kDGYfKWx0", note: "без шифрования, Lucky, 7 глав на разных листах превью"),
         TestItem(kind: .playlist, code: "7V3uCmRxBi", note: "плейлист «Лиля», первый элемент"),
         TestItem(kind: .channel, code: "ksFeHdZjAJ", note: "канал «Тест», без шифрования"),
         TestItem(kind: .channel, code: "32ZkjwRHVL", note: "ШИФРОВАННЫЙ КАНАЛ, SAMPLE-AES")
@@ -52,8 +53,7 @@ enum Scenario {
 
     static var seekTo: Double? { value("-seek-to").flatMap(Double.init) }
     static var pauseAfter: Double? { value("-pause-after").flatMap(Double.init) }
-    static var resumeAfter: Double? { value("-resume-after").flatMap(Double.init) }
-}
+    static var resumeAfter: Double? { value("-resume-after").flatMap(Double.init) }}
 
 /// Строка журнала с меткой: по ней вывод приложения ищется в консоли `simctl` / `devicectl`.
 enum Log {

@@ -25,6 +25,7 @@ struct PublicConfig: Decodable {
         let locked: Bool?
     }
 
+    let code: String?
     let title: String?
     let encrypted: Bool?
     let durationMs: Int?
@@ -49,6 +50,8 @@ struct Resolved: Identifiable {
     let chapters: [PublicConfig.Chapter]
     let durationMs: Int?
     let live: Bool
+    /// Код медиа для превью-спрайтов (`/preview/{code}/…`) — из него режутся картинки глав. У эфира глав нет.
+    let previewCode: String?
 }
 
 enum StreamerError: LocalizedError {
@@ -94,8 +97,10 @@ enum StreamerAPI {
         }
         let label = "\(item.kind.rawValue) \(item.code) \(packaging.rawValue.uppercased()) «\(cfg.title ?? "")»"
             + " encrypted=\(cfg.encrypted.map { String($0) } ?? "—")"
+        // У элемента плейлиста в конфиге свой код (элемента, а не плейлиста) — по нему и превью.
         return Resolved(label: label, url: url, chapters: cfg.chapters ?? [],
-                        durationMs: cfg.durationMs, live: live)
+                        durationMs: cfg.durationMs, live: live,
+                        previewCode: live ? nil : (cfg.code ?? item.code))
     }
 
     private static func fetch(_ path: String) async throws -> PublicConfig {

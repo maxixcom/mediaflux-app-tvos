@@ -11,9 +11,7 @@ struct PlayerScreen: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let item = AVPlayerItem(url: resolved.url)
-        if !resolved.chapters.isEmpty {
-            item.navigationMarkerGroups = [Chapters.group(resolved.chapters, durationMs: resolved.durationMs)]
-        }
+        Chapters.attach(to: item, resolved: resolved)
         let player = AVPlayer(playerItem: item)
         let vc = AVPlayerViewController()
         vc.player = player
@@ -56,8 +54,28 @@ struct PlayerScreen: UIViewControllerRepresentable {
 }
 
 enum Chapters {
+    /// Маркеры глав на элемент плеера (MF-97). Старт воспроизведения картинок не ждёт.
+    ///
+    /// Маркеры с названиями ставятся сразу, картинки плиток догружаются из превью-спрайтов, и маркеры
+    /// переназначаются уже с ними — панель «Chapters» это подхватывает (проверено на Apple TV 15.11.2026:
+    /// картинки встают через ~1,6 с после старта, раньше начала воспроизведения).
+    static func attach(to item: AVPlayerItem, resolved: Resolved) {
+        let chapters = resolved.chapters, durationMs = resolved.durationMs
+        guard !chapters.isEmpty else { return }
+        item.navigationMarkerGroups = [group(chapters, durationMs: durationMs)]
+        guard let code = resolved.previewCode else { return }
+        Task { @MainActor in
+            let artwork = await ChapterArtwork.load(code: code, chapters: chapters)
+            guard !artwork.isEmpty else { return }
+            item.navigationMarkerGroups = [group(chapters, durationMs: durationMs, artwork: artwork)]
+            Log.line("главы: маркеры переназначены с картинками \(artwork.count) из \(chapters.count)")
+        }
+    }
+
     /// Главы конфига → маркеры навигации tvOS: конец главы — начало следующей, у последней — конец ролика.
-    static func group(_ chapters: [PublicConfig.Chapter], durationMs: Int?) -> AVNavigationMarkersGroup {
+    /// `artwork` — JPEG плитки по началу главы (мс); у главы без картинки — только название.
+    static func group(_ chapters: [PublicConfig.Chapter], durationMs: Int?,
+                      artwork: [Int: Data] = [:]) -> AVNavigationMarkersGroup {
         let sorted = chapters.sorted { $0.startMs < $1.startMs }
         let markers: [AVTimedMetadataGroup] = sorted.enumerated().map { index, ch in
             let endMs = index + 1 < sorted.count ? sorted[index + 1].startMs : (durationMs ?? ch.startMs + 1000)
@@ -67,7 +85,17 @@ enum Chapters {
             title.identifier = .commonIdentifierTitle
             title.value = ch.title as NSString
             title.extendedLanguageTag = "und"
-            return AVTimedMetadataGroup(items: [title], timeRange: range)
+            var items: [AVMetadataItem] = [title]
+            if let jpeg = artwork[ch.startMs] {
+                // Картинку плитки штатный плеер берёт из `commonIdentifierArtwork` группы маркера.
+                let art = AVMutableMetadataItem()
+                art.identifier = .commonIdentifierArtwork
+                art.value = jpeg as NSData
+                art.dataType = kCMMetadataBaseDataType_JPEG as String
+                art.extendedLanguageTag = "und"
+                items.append(art)
+            }
+            return AVTimedMetadataGroup(items: items, timeRange: range)
         }
         return AVNavigationMarkersGroup(title: nil, timedNavigationMarkers: markers)
     }
