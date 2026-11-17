@@ -1,4 +1,4 @@
-# mediaflux-app-tv
+# mediaflux-app-tvos
 
 Приложение dodocast для Apple TV (MF-86; устройство — `../mediaflux-docs/docs/APPS.md`). Сейчас здесь
 **пробное приложение этапа Э0** (MF-87). Оно отвечает на два вопроса: играет ли наш HLS в AVPlayer и как
