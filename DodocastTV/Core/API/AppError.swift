@@ -24,6 +24,7 @@ struct AppError: Error, Equatable, Sendable {
         case loginExpired = "LOGIN_EXPIRED"
         case loginDenied = "LOGIN_DENIED"
         case incompatibleVersion = "INCOMPATIBLE_VERSION"
+        case playbackFailed = "PLAYBACK_FAILED"
         case unknown = "UNKNOWN"
         // 403 входа (app-api AppAuthenticationEntryPoint)
         case accountNotReady = "account_not_ready"
@@ -61,6 +62,7 @@ struct AppError: Error, Equatable, Sendable {
         case .signedOut: String(localized: "Вход больше не действует — войдите заново.")
         case .loginExpired: String(localized: "Код истёк. Получите новый.")
         case .loginDenied: String(localized: "Вход отклонён на телефоне.")
+        case .playbackFailed: String(localized: "Не удалось воспроизвести. Попробуйте ещё раз.")
         case .incompatibleVersion, .operationNotRegistered: String(localized: "Версия приложения не подходит этому серверу.")
         case .accountNotReady:
             String(localized: "Аккаунт ещё не готов: один раз откройте личный кабинет в браузере и войдите.")

@@ -3,6 +3,7 @@ import SwiftUI
 /// Вошли и устройство подключено: вкладки сверху, как у штатных приложений tvOS.
 struct MainView: View {
     @State private var homePath = Route.fromLaunchArguments.map { [$0] } ?? []
+    @State private var autoplay = PlayRequest.fromLaunchArguments
 
     var body: some View {
         // tvOS 17: вкладки старым API (`tabItem`), `Tab` — только с tvOS 18.
@@ -14,6 +15,7 @@ struct MainView: View {
             NavigationStack { SettingsView() }
                 .tabItem { Label("Настройки", systemImage: "gearshape") }
         }
+        .fullScreenCover(item: $autoplay) { PlayerView(request: $0) }
     }
 }
 
@@ -28,6 +30,21 @@ extension Route {
         case "media": return .media(parts[1])
         case "library": return .library(LibraryRef(id: parts[1], title: "", itemCount: 0))
         case "playlist": return .playlist(parts[1])
+        default: return nil
+        }
+    }
+}
+
+extension PlayRequest {
+    /// Сразу открыть плеер — для проверок без пульта: `-play media:846`, `-play media:846:beginning`, `-play channel:3`.
+    static var fromLaunchArguments: PlayRequest? {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-play"), i + 1 < args.count else { return nil }
+        let parts = args[i + 1].split(separator: ":").map(String.init)
+        guard parts.count >= 2 else { return nil }
+        switch parts[0] {
+        case "media": return .media(parts[1], start: parts.count > 2 && parts[2] == "beginning" ? .beginning : .resume)
+        case "channel": return .channel(parts[1])
         default: return nil
         }
     }

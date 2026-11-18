@@ -91,6 +91,18 @@
       "body": "mutation FavoriteRemove($target: FavoriteTargetInput!) { favoriteRemove(target: $target) }",
       "name": "FavoriteRemove",
       "type": "mutation"
+    },
+    {
+      "id": "2ca331ad13e352113fab5d5075bd181aa190e7c12b3209139d5ec077c7194090",
+      "body": "mutation PlaybackStart($input: PlaybackStartInput!) { playbackStart(input: $input) { __typename url expiresAt title durationMs chapters { __typename startMs title } coverUrl previewManifestUrl resumePositionMs } }",
+      "name": "PlaybackStart",
+      "type": "mutation"
+    },
+    {
+      "id": "c616f5b807d214ab9a8714430bc578736ae57c6e665fbacc9754face85371982",
+      "body": "mutation ProgressReport($input: ProgressReportInput!) { progressReport(input: $input) }",
+      "name": "ProgressReport",
+      "type": "mutation"
     }
   ]
 }

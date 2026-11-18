@@ -29,6 +29,7 @@ extension DCAPI {
 
     private static let objectTypeMap: [String: ApolloAPI.Object] = [
       "Channel": DCAPI.Objects.Channel,
+      "Chapter": DCAPI.Objects.Chapter,
       "Device": DCAPI.Objects.Device,
       "Home": DCAPI.Objects.Home,
       "Library": DCAPI.Objects.Library,
@@ -38,6 +39,7 @@ extension DCAPI {
       "MediaConnection": DCAPI.Objects.MediaConnection,
       "MediaProgress": DCAPI.Objects.MediaProgress,
       "Mutation": DCAPI.Objects.Mutation,
+      "Playback": DCAPI.Objects.Playback,
       "Playlist": DCAPI.Objects.Playlist,
       "PlaylistConnection": DCAPI.Objects.PlaylistConnection,
       "Query": DCAPI.Objects.Query,

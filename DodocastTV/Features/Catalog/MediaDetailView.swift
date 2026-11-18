@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Карточка медиа: обложка, название, длительность, описание; «Смотреть» или «Продолжить с …» и «С начала»,
-/// «Просмотрено», «В избранное». Воспроизведение — шаг 3.3.
+/// «Просмотрено», «В избранное».
 struct MediaDetailView: View {
     let id: String
 
@@ -21,6 +21,7 @@ private struct MediaDetailContent: View {
     @State var item: MediaItem
     @State private var busy = false
     @State private var error: AppError?
+    @State private var play: PlayRequest?
 
     var body: some View {
         HStack(alignment: .top, spacing: 64) {
@@ -40,6 +41,20 @@ private struct MediaDetailContent: View {
         }
         .padding(80)
         .frame(maxHeight: .infinity, alignment: .top)
+        .fullScreenCover(item: $play, onDismiss: refresh) { request in
+            PlayerView(request: request, description: item.description)
+        }
+    }
+
+    /// После плеера — свежая позиция и отметка «просмотрено».
+    private func refresh() {
+        guard let catalog = app.catalog else { return }
+        Task {
+            if var fresh = try? await catalog.media(item.id) {
+                fresh.description = fresh.description ?? item.description
+                item = fresh
+            }
+        }
     }
 
     @ViewBuilder private var meta: some View {
@@ -58,10 +73,14 @@ private struct MediaDetailContent: View {
         VStack(alignment: .leading, spacing: 24) {
             HStack(spacing: 32) {
                 if let resume = item.resumeMs {
-                    Button("Продолжить с \(Format.position(resume))", systemImage: "play.fill") {}.disabled(true)
-                    Button("С начала", systemImage: "arrow.counterclockwise") {}.disabled(true)
+                    Button("Продолжить с \(Format.position(resume))", systemImage: "play.fill") {
+                        play = .media(item.id, start: .resume)
+                    }
+                    Button("С начала", systemImage: "arrow.counterclockwise") {
+                        play = .media(item.id, start: .beginning)
+                    }
                 } else {
-                    Button("Смотреть", systemImage: "play.fill") {}.disabled(true)
+                    Button("Смотреть", systemImage: "play.fill") { play = .media(item.id, start: .beginning) }
                 }
             }
             HStack(spacing: 32) {

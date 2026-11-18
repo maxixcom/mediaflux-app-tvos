@@ -9,6 +9,10 @@ struct Session: Sendable {
     let info: ServerInfo
     let tokens: TokenStore
     let api: API
+    /// Недосланные отчёты о позиции этого сервера (§7).
+    let outbox: ProgressOutbox
+
+    var progress: ProgressSender { ProgressSender(api: api, outbox: outbox) }
 }
 
 /// Кто вошёл и с какого устройства — для экранов и настроек.
@@ -43,6 +47,8 @@ final class AppModel {
 
     /// Каталог текущего сервера; нет сессии — нет каталога.
     var catalog: Catalog? { session.map { Catalog(api: $0.api) } }
+
+    var progressSender: ProgressSender? { session?.progress }
 
     /// Метка стенда на экране — для всего, кроме прода (APPS.md §5.1).
     var standLabel: String? {
@@ -100,7 +106,8 @@ final class AppModel {
             return
         }
         let tokens = TokenStore(oidc: OIDCClient(issuer: info.issuer, clientId: info.clientId), serverKey: entry.key)
-        let session = Session(server: entry, info: info, tokens: tokens, api: API(graphqlURL: info.graphqlUrl, tokens: tokens))
+        let session = Session(server: entry, info: info, tokens: tokens, api: API(graphqlURL: info.graphqlUrl, tokens: tokens),
+                              outbox: ProgressOutbox(serverKey: entry.key))
         self.session = session
         Log.line("сервер \(info.stand) (\(entry.url.host() ?? "")): прод=\(info.production), клиент \(info.clientId)")
         if tokens.hasRefreshToken {
@@ -131,6 +138,7 @@ final class AppModel {
                 account = Account(name: me.name, email: me.email, deviceId: device.id, deviceName: device.name)
                 Log.line("устройство уже подключено: \(device.name)")
                 screen = .home
+                Task { await session.progress.flush() }
                 return
             }
         } catch {
@@ -155,6 +163,7 @@ final class AppModel {
             Log.line("устройство подключено: \(device.fragments.deviceFields.name)")
             await loadAccount()
             screen = .home
+            Task { await session.progress.flush() }
         } catch {
             let e = AppError.from(error)
             if e.is(.deviceLimitReached) {
@@ -179,6 +188,8 @@ final class AppModel {
     /// Выйти: отключить своё устройство на сервере (слот освобождается), отозвать офлайн-сессию, забыть токены.
     func signOut() async {
         guard let session else { return }
+        await session.progress.flush()
+        await session.outbox.clear()
         if let id = account?.deviceId {
             _ = try? await session.api.perform(DCAPI.DeviceRevokeMutation(id: id))
         }
@@ -206,6 +217,7 @@ final class AppModel {
     /// Уйти со старого сервера (смена сервера, §5.1): дослать позицию, отозвать офлайн-токен у его Keycloak (если он
     /// отвечает), забыть токены; кэш Apollo уходит вместе с `API`. Идентификатор установки остаётся.
     private func leave(_ old: Session, revoke: Bool) async {
+        await old.progress.flush()
         await old.tokens.signOut(revoke: revoke)
         await ImageLoader.shared.clear()
         session = nil

@@ -1,0 +1,22 @@
+# Воспроизведение (APPS.md §8): токен потока — один раз на сеанс просмотра, отдельной операцией, а не полем
+# карточки. Позиция (§7): раз в 15 с во время игры, на паузе и выходе — сразу с final.
+
+mutation PlaybackStart($input: PlaybackStartInput!) {
+  playbackStart(input: $input) {
+    url
+    expiresAt
+    title
+    durationMs
+    chapters {
+      startMs
+      title
+    }
+    coverUrl
+    previewManifestUrl
+    resumePositionMs
+  }
+}
+
+mutation ProgressReport($input: ProgressReportInput!) {
+  progressReport(input: $input)
+}

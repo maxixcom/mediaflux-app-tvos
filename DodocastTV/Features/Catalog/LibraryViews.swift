@@ -109,6 +109,7 @@ struct PlaylistView: View {
 private struct PlaylistContent: View {
     @Environment(AppModel.self) private var app
     @State var detail: PlaylistDetail
+    @State private var play: PlayRequest?
     private let columns = [GridItem(.adaptive(minimum: CardSize.width, maximum: CardSize.width), spacing: 48)]
 
     var body: some View {
@@ -121,19 +122,29 @@ private struct PlaylistContent: View {
                 if let description = detail.description, !description.isEmpty {
                     Text(description).foregroundStyle(.secondary).frame(maxWidth: 1400, alignment: .leading)
                 }
-                FavoriteButton(target: .playlist(detail.playlist.id), isOn: $detail.playlist.favorite)
+                HStack(spacing: 32) {
+                    if let first = detail.items.first {
+                        // Подборка подряд: после конца элемента — следующий (с его позиции, если начат).
+                        Button("Смотреть подборку", systemImage: "play.fill") {
+                            play = .media(first.id, start: .resume, queue: detail.items.dropFirst().map(\.id))
+                        }
+                    }
+                    FavoriteButton(target: .playlist(detail.playlist.id), isOn: $detail.playlist.favorite)
+                }
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 56) {
                     ForEach(detail.items) { MediaCard(item: $0) }
                 }
             }
             .padding(80)
         }
+        .fullScreenCover(item: $play) { PlayerView(request: $0) }
     }
 }
 
-/// Канал: название, «в эфире», описание, избранное. Смотреть — шаг 3.3 (плеер).
+/// Канал: название, «в эфире», описание, «Смотреть» (живой эфир, без позиции), избранное.
 struct ChannelView: View {
     @State var item: ChannelItem
+    @State private var play: PlayRequest?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
@@ -145,14 +156,14 @@ struct ChannelView: View {
                 Text(description).foregroundStyle(.secondary).frame(maxWidth: 1400, alignment: .leading)
             }
             HStack(spacing: 32) {
-                Button("Смотреть", systemImage: "play.fill") {}
-                    .disabled(true)
+                Button("Смотреть", systemImage: "play.fill") { play = .channel(item.id) }
                 FavoriteButton(target: .channel(item.id), isOn: $item.favorite)
             }
             Spacer()
         }
         .padding(80)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .fullScreenCover(item: $play) { PlayerView(request: $0) }
     }
 }
 

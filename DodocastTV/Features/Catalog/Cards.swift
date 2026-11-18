@@ -36,11 +36,13 @@ struct MediaCard: View {
         if let p = item.progress, !p.watched, let fraction = p.fraction(durationMs: item.durationMs), fraction > 0 {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Rectangle().fill(.black.opacity(0.5))
-                    Rectangle().fill(Brand.accent).frame(width: geo.size.width * fraction)
+                    Capsule().fill(Brand.progressTrack)
+                    Capsule().fill(Brand.progressFill).frame(width: max(geo.size.width * fraction, 6))
                 }
             }
-            .frame(height: 8)
+            .frame(height: 6)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
         }
     }
 

@@ -820,6 +820,36 @@
           }
         }
       }
+    },
+    "Закрыть": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "Смотреть подборку": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play collection"
+          }
+        }
+      }
+    },
+    "Не удалось воспроизвести. Попробуйте ещё раз.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback failed. Please try again."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
