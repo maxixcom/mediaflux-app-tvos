@@ -1,0 +1,125 @@
+# Каталог (APPS.md §3–§4): только своё и только активное. Карточки — общими фрагментами: одна выборка полей на ленту,
+# карточку и избранное, без лишнего.
+
+fragment MediaCard on Media {
+  id
+  title
+  durationMs
+  coverUrl
+  favorite
+  progress {
+    positionMs
+    durationMs
+    watched
+  }
+}
+
+fragment PlaylistCard on Playlist {
+  id
+  title
+  itemCount
+  coverUrl
+  favorite
+}
+
+fragment ChannelCard on Channel {
+  id
+  title
+  onAir
+  favorite
+}
+
+query Home {
+  home {
+    continueWatching {
+      ...MediaCard
+    }
+    recent {
+      ...MediaCard
+    }
+    favorites {
+      __typename
+      ... on Media {
+        ...MediaCard
+      }
+      ... on Playlist {
+        ...PlaylistCard
+      }
+      ... on Channel {
+        ...ChannelCard
+      }
+    }
+    shelves {
+      library {
+        id
+        title
+        itemCount
+      }
+      items {
+        ...MediaCard
+      }
+    }
+    channels {
+      ...ChannelCard
+    }
+  }
+}
+
+query Libraries {
+  libraries(page: { size: 100 }) {
+    nodes {
+      id
+      title
+      itemCount
+      coverUrl
+    }
+  }
+}
+
+query Library($id: ID!, $page: PageInput) {
+  library(id: $id) {
+    id
+    title
+    description
+    itemCount
+    items(page: $page) {
+      totalCount
+      nodes {
+        ...MediaCard
+      }
+    }
+  }
+}
+
+query Playlists {
+  playlists(page: { size: 100 }) {
+    nodes {
+      ...PlaylistCard
+    }
+  }
+}
+
+query Playlist($id: ID!) {
+  playlist(id: $id) {
+    ...PlaylistCard
+    description
+    items {
+      ...MediaCard
+    }
+  }
+}
+
+query Channels {
+  channels {
+    ...ChannelCard
+    description
+  }
+}
+
+query Media($id: ID!) {
+  media(id: $id) {
+    ...MediaCard
+    description
+    createdAt
+  }
+}

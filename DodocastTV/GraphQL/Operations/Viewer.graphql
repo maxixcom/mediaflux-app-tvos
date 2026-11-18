@@ -1,0 +1,16 @@
+# Состояние зрителя (APPS.md §7): «просмотрено» и избранное. Позиция просмотра — в плеере (шаг 3.3).
+
+mutation MarkWatched($mediaId: ID!, $watched: Boolean!) {
+  markWatched(mediaId: $mediaId, watched: $watched) {
+    positionMs
+    watched
+  }
+}
+
+mutation FavoriteAdd($target: FavoriteTargetInput!) {
+  favoriteAdd(target: $target)
+}
+
+mutation FavoriteRemove($target: FavoriteTargetInput!) {
+  favoriteRemove(target: $target)
+}

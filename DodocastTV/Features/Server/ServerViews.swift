@@ -42,8 +42,7 @@ struct ServerPickerView: View {
     private func chooseCustom() {
         let text = custom.trimmingCharacters(in: .whitespaces)
         guard !text.isEmpty else { return }
-        let withScheme = text.contains("://") ? text : "https://\(text)"
-        guard let url = URL(string: withScheme), url.host() != nil else {
+        guard let url = ServerAddress.url(from: text) else {
             customError = "Не похоже на адрес сервера"
             return
         }

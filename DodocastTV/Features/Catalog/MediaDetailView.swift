@@ -1,0 +1,95 @@
+import SwiftUI
+
+/// Карточка медиа: обложка, название, длительность, описание; «Смотреть» или «Продолжить с …» и «С начала»,
+/// «Просмотрено», «В избранное». Воспроизведение — шаг 3.3.
+struct MediaDetailView: View {
+    let id: String
+
+    var body: some View {
+        Loadable(load: { try await $0.media(id) }, content: { item in
+            if let item {
+                MediaDetailContent(item: item)
+            } else {
+                Text(AppError(.notFound).message)
+            }
+        }, reloadOnAppear: true)
+    }
+}
+
+private struct MediaDetailContent: View {
+    @Environment(AppModel.self) private var app
+    @State var item: MediaItem
+    @State private var busy = false
+    @State private var error: AppError?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 64) {
+            RemoteImage(url: item.coverURL)
+                .frame(width: 880, height: 495)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            VStack(alignment: .leading, spacing: 28) {
+                Text(item.title).font(.title2.weight(.semibold)).lineLimit(3)
+                meta
+                if let description = item.description, !description.isEmpty {
+                    Text(description).font(.callout).foregroundStyle(.secondary).lineLimit(6)
+                }
+                actions
+                if let error { Text(error.message).foregroundStyle(.red) }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(80)
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+
+    @ViewBuilder private var meta: some View {
+        HStack(spacing: 24) {
+            if let d = item.durationMs { Text(Format.duration(d)) }
+            if item.watched {
+                Label("Просмотрено", systemImage: "checkmark")
+            } else if let resume = item.resumeMs {
+                Text("Остановились на \(Format.position(resume))")
+            }
+        }
+        .foregroundStyle(.secondary)
+    }
+
+    @ViewBuilder private var actions: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            HStack(spacing: 32) {
+                if let resume = item.resumeMs {
+                    Button("Продолжить с \(Format.position(resume))", systemImage: "play.fill") {}.disabled(true)
+                    Button("С начала", systemImage: "arrow.counterclockwise") {}.disabled(true)
+                } else {
+                    Button("Смотреть", systemImage: "play.fill") {}.disabled(true)
+                }
+            }
+            HStack(spacing: 32) {
+                Button {
+                    setWatched(!item.watched)
+                } label: {
+                    Label(item.watched ? "Не просмотрено" : "Просмотрено",
+                          systemImage: item.watched ? "arrow.uturn.backward" : "checkmark")
+                }
+                .disabled(busy)
+                FavoriteButton(target: .media(item.id), isOn: $item.favorite)
+            }
+        }
+    }
+
+    private func setWatched(_ watched: Bool) {
+        guard let catalog = app.catalog else { return }
+        busy = true
+        Task {
+            defer { busy = false }
+            do {
+                let p = try await catalog.markWatched(item.id, watched)
+                item.progress = ViewProgress(positionMs: p.positionMs, durationMs: item.durationMs, watched: p.watched)
+                error = nil
+            } catch {
+                let e = AppError.from(error)
+                if e.needsSignIn { await app.handle(e) } else { self.error = e }
+            }
+        }
+    }
+}

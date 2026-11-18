@@ -11,8 +11,8 @@ enum Brand {
     /// Логотип для тёмного фона (`Brand/Assets.xcassets/Logo`).
     static let logo = "Logo"
 
-    /// Акцентный цвет бренда — `AccentColor` того же каталога: tvOS красит им фокус и элементы управления.
-    static let accent = Color.accentColor
+    /// Акцентный цвет бренда — `AccentColor` того же каталога (полоса просмотренного, отметки).
+    static let accent = Color("AccentColor")
 
     /// Готовый список серверов (APPS.md §5.1). Прод — первым: в сборке для App Store выбор скрыт и остаётся он.
     static let servers: [ServerEntry] = [

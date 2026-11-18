@@ -47,7 +47,7 @@ struct RootView: View {
         case let .deviceLimit(error):
             DeviceLimitView(error: error)
         case .home:
-            HomeView()
+            MainView()
         }
     }
 }

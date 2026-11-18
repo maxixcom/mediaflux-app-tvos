@@ -3,6 +3,48 @@
   "version": 1,
   "operations": [
     {
+      "id": "ca00cb5b3f1143eb3a71618ba3d6be4079e469e8c3995769866ae5d0601ddbf5",
+      "body": "query Home { home { __typename continueWatching { __typename ...MediaCard } recent { __typename ...MediaCard } favorites { __typename ... on Media { ...MediaCard } ... on Playlist { ...PlaylistCard } ... on Channel { ...ChannelCard } } shelves { __typename library { __typename id title itemCount } items { __typename ...MediaCard } } channels { __typename ...ChannelCard } } }\nfragment ChannelCard on Channel { __typename id title onAir favorite }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }\nfragment PlaylistCard on Playlist { __typename id title itemCount coverUrl favorite }",
+      "name": "Home",
+      "type": "query"
+    },
+    {
+      "id": "f3de0864310d6e50fc274ee0b0521979196c96398ea5cc6c24a87518b8f87800",
+      "body": "query Libraries { libraries(page: { size: 100 }) { __typename nodes { __typename id title itemCount coverUrl } } }",
+      "name": "Libraries",
+      "type": "query"
+    },
+    {
+      "id": "4b0d07b3abb1141015487a16c2676c3e3c9dead2b8a28e869a3ead3b2e1e4004",
+      "body": "query Library($id: ID!, $page: PageInput) { library(id: $id) { __typename id title description itemCount items(page: $page) { __typename totalCount nodes { __typename ...MediaCard } } } }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }",
+      "name": "Library",
+      "type": "query"
+    },
+    {
+      "id": "a7a00b1c6f5cc7826710589a4cd735247e167dca1bb866e4b6559b6ea0b64028",
+      "body": "query Playlists { playlists(page: { size: 100 }) { __typename nodes { __typename ...PlaylistCard } } }\nfragment PlaylistCard on Playlist { __typename id title itemCount coverUrl favorite }",
+      "name": "Playlists",
+      "type": "query"
+    },
+    {
+      "id": "bc351eb2861faa409863e8b6e5e8af907c518dfdbfd546e23545b7643f2a5f87",
+      "body": "query Playlist($id: ID!) { playlist(id: $id) { __typename ...PlaylistCard description items { __typename ...MediaCard } } }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }\nfragment PlaylistCard on Playlist { __typename id title itemCount coverUrl favorite }",
+      "name": "Playlist",
+      "type": "query"
+    },
+    {
+      "id": "6cfcafcbd5da813afdd1ef9540289144bea9877e2c04e4643dfd7f406bb6fe66",
+      "body": "query Channels { channels { __typename ...ChannelCard description } }\nfragment ChannelCard on Channel { __typename id title onAir favorite }",
+      "name": "Channels",
+      "type": "query"
+    },
+    {
+      "id": "17badbd5e0e08fa9be0d60612b2242413d433664a6da7a9f734e7779ddfad04e",
+      "body": "query Media($id: ID!) { media(id: $id) { __typename ...MediaCard description createdAt } }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }",
+      "name": "Media",
+      "type": "query"
+    },
+    {
       "id": "faa5bf79632f1a58da4c081ea9236e8b39f4e472dbac5250a94ad63e5a027fc4",
       "body": "query Me { me { __typename id name email deviceLimit deliveryBlock device { __typename ...DeviceFields } } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
       "name": "Me",
@@ -30,6 +72,24 @@
       "id": "0b8157c1e291df322f549de9aa71f21206d081f08d827a00896975cd43b7946a",
       "body": "mutation DeviceRevoke($id: ID!) { deviceRevoke(id: $id) }",
       "name": "DeviceRevoke",
+      "type": "mutation"
+    },
+    {
+      "id": "97ef1a54d2e056b7eedd08a025e906382bdb8b12136e6ce5d9ce844464bba2c2",
+      "body": "mutation MarkWatched($mediaId: ID!, $watched: Boolean!) { markWatched(mediaId: $mediaId, watched: $watched) { __typename positionMs watched } }",
+      "name": "MarkWatched",
+      "type": "mutation"
+    },
+    {
+      "id": "e3364fb051f4e00c0d1110c8147c5800489fe502b91ef2cf90750165023dff91",
+      "body": "mutation FavoriteAdd($target: FavoriteTargetInput!) { favoriteAdd(target: $target) }",
+      "name": "FavoriteAdd",
+      "type": "mutation"
+    },
+    {
+      "id": "80037a8946a6402605459f2d585adda15eea992af4824ae275d78969378d708d",
+      "body": "mutation FavoriteRemove($target: FavoriteTargetInput!) { favoriteRemove(target: $target) }",
+      "name": "FavoriteRemove",
       "type": "mutation"
     }
   ]

@@ -37,6 +37,10 @@ final class API: Sendable {
         do {
             response = try await body()
         } catch {
+            // Ушли с экрана, не дождавшись ответа: это не ошибка, экрану показывать нечего.
+            if Task.isCancelled || error is CancellationError || (error as? URLError)?.code == .cancelled {
+                throw CancellationError()
+            }
             throw Self.unwrap(error)
         }
         if let error = response.errors?.first {
@@ -94,18 +98,23 @@ private struct AuthInterceptor: HTTPInterceptor {
         return r
     }
 
-    /// Не 2xx — в `AppError`: 403 входа несёт причину в теле (`{"error": "account_not_ready"}`), 401 после
-    /// обновления — вход больше не действует, остальное — сервер недоступен.
+    /// Не 2xx:
+    /// - 403 входа несёт причину в теле (`{"error": "account_not_ready"}`) — в `AppError`;
+    /// - 401 после обновления — вход больше не действует;
+    /// - прочие 4xx с ответом GraphQL — дальше, разбору Apollo. Apollo 2 просит `application/graphql-response+json`, а
+    ///   по GraphQL over HTTP ответ без `data` (отказ привратника: `RATE_LIMITED`, `OPERATION_NOT_REGISTERED`…) приходит
+    ///   с 4xx. Код ошибки — в `extensions` тела, выбросить тело — значит показать «сервер недоступен» вместо причины;
+    /// - 5xx и не-JSON — сервер недоступен.
     private static func checked(_ response: consuming HTTPResponse) async -> HTTPResponse {
         await response.mapChunks { http, chunk in
             let status = http.statusCode
             guard !(200..<300).contains(status) else { return chunk }
-            if status == 403,
-               let body = try? JSONSerialization.jsonObject(with: chunk) as? [String: Any],
-               let reason = body["error"] as? String {
+            let body = try? JSONSerialization.jsonObject(with: chunk) as? [String: Any]
+            if status == 403, let reason = body?["error"] as? String {
                 throw AppError(code: reason)
             }
             if status == 401 { throw AppError(.signedOut) }
+            if (400..<500).contains(status), body?["errors"] != nil { return chunk }
             Log.line("GraphQL: HTTP \(status)")
             throw AppError(.serverUnavailable)
         }

@@ -41,6 +41,9 @@ final class AppModel {
     private(set) var session: Session?
     private(set) var account: Account?
 
+    /// Каталог текущего сервера; нет сессии — нет каталога.
+    var catalog: Catalog? { session.map { Catalog(api: $0.api) } }
+
     /// Метка стенда на экране — для всего, кроме прода (APPS.md §5.1).
     var standLabel: String? {
         guard let info = session?.info, !info.production else { return nil }
@@ -101,7 +104,7 @@ final class AppModel {
         self.session = session
         Log.line("сервер \(info.stand) (\(entry.url.host() ?? "")): прод=\(info.production), клиент \(info.clientId)")
         if tokens.hasRefreshToken {
-            await registerDevice()
+            await resumeSession()
         } else {
             screen = .login
         }
@@ -117,8 +120,28 @@ final class AppModel {
         await registerDevice()
     }
 
-    /// Регистрация устройства (§6): повтор для той же установки обновляет запись и слот не тратит, поэтому
-    /// зовём её на каждом старте — заодно сервер узнаёт версию приложения.
+    /// Старт с сохранённым входом: устройство уже подключено и версия та же — сразу на главный экран; иначе —
+    /// регистрация. Регистрацию на каждом старте не зовём: у неё лимит (5 в час на пользователя, APPS.md §10), и пара
+    /// перезапусков подряд закрыла бы вход. `me` доступен и без устройства.
+    private func resumeSession() async {
+        guard let session else { return }
+        do {
+            let me = try await session.api.fetch(DCAPI.MeQuery()).me
+            if let device = me.device?.fragments.deviceFields, device.appVersion == AppVersion.current {
+                account = Account(name: me.name, email: me.email, deviceId: device.id, deviceName: device.name)
+                Log.line("устройство уже подключено: \(device.name)")
+                screen = .home
+                return
+            }
+        } catch {
+            await handle(AppError.from(error))
+            return
+        }
+        await registerDevice()
+    }
+
+    /// Регистрация устройства (§6): после входа и при новой версии приложения. Повтор для той же установки обновляет
+    /// запись и слот не тратит.
     func registerDevice() async {
         guard let session else { return }
         let input = DCAPI.DeviceRegisterInput(
@@ -184,6 +207,7 @@ final class AppModel {
     /// отвечает), забыть токены; кэш Apollo уходит вместе с `API`. Идентификатор установки остаётся.
     private func leave(_ old: Session, revoke: Bool) async {
         await old.tokens.signOut(revoke: revoke)
+        await ImageLoader.shared.clear()
         session = nil
         account = nil
         Log.line("сервер \(old.info.stand): вышли")

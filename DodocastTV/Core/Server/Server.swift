@@ -16,6 +16,26 @@ struct ServerEntry: Identifiable, Hashable, Codable, Sendable {
     var key: String { url.host().map { "\($0):\(url.port ?? 0)" } ?? url.absoluteString }
 }
 
+/// Адрес, введённый руками («Другой адрес…»). Без схемы: стенды — `https://`, а локальная среда разработчика (IP,
+/// `localhost`, `*.local`) — `http://`: TLS там нет. Порт — как ввели (app-api локально — 17091).
+enum ServerAddress {
+    static func url(from text: String) -> URL? {
+        let text = text.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return nil }
+        if text.contains("://") {
+            guard let url = URL(string: text), url.host() != nil else { return nil }
+            return url
+        }
+        guard let probe = URL(string: "http://\(text)"), let host = probe.host() else { return nil }
+        return isLocal(host) ? probe : URL(string: "https://\(text)")
+    }
+
+    static func isLocal(_ host: String) -> Bool {
+        host == "localhost" || host.hasSuffix(".local")
+            || host.split(separator: ".").count == 4 && host.split(separator: ".").allSatisfy { UInt8($0) != nil }
+    }
+}
+
 /// Сведения о сервере — `GET /server-info?platform=tvos` (app-api, MF-88).
 struct ServerInfo: Decodable, Equatable, Sendable {
     let stand: String

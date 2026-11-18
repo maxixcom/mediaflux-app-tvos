@@ -34,6 +34,15 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(a.title, "localhost")
     }
 
+    func testTypedAddressGetsSchemeByKindOfHost() {
+        XCTAssertEqual(ServerAddress.url(from: "192.168.254.132:17091")?.absoluteString, "http://192.168.254.132:17091")
+        XCTAssertEqual(ServerAddress.url(from: "localhost:17091")?.absoluteString, "http://localhost:17091")
+        XCTAssertEqual(ServerAddress.url(from: "mac.local:17091")?.absoluteString, "http://mac.local:17091")
+        XCTAssertEqual(ServerAddress.url(from: "app.tst.media-flux.ru")?.absoluteString, "https://app.tst.media-flux.ru")
+        XCTAssertEqual(ServerAddress.url(from: " http://x.example ")?.absoluteString, "http://x.example")
+        XCTAssertNil(ServerAddress.url(from: ""))
+    }
+
     func testKnownCodesHaveOwnPhrase() {
         let unknown = AppError(.unknown).message
         for code: AppError.Code in [.serverUnavailable, .network, .signedOut, .accountNotReady, .deviceRevoked,

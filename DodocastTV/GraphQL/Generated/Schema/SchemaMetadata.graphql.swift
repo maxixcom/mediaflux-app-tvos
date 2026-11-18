@@ -28,10 +28,20 @@ extension DCAPI {
     static let configuration: any ApolloAPI.SchemaConfiguration.Type = SchemaConfiguration.self
 
     private static let objectTypeMap: [String: ApolloAPI.Object] = [
+      "Channel": DCAPI.Objects.Channel,
       "Device": DCAPI.Objects.Device,
+      "Home": DCAPI.Objects.Home,
+      "Library": DCAPI.Objects.Library,
+      "LibraryConnection": DCAPI.Objects.LibraryConnection,
       "Me": DCAPI.Objects.Me,
+      "Media": DCAPI.Objects.Media,
+      "MediaConnection": DCAPI.Objects.MediaConnection,
+      "MediaProgress": DCAPI.Objects.MediaProgress,
       "Mutation": DCAPI.Objects.Mutation,
-      "Query": DCAPI.Objects.Query
+      "Playlist": DCAPI.Objects.Playlist,
+      "PlaylistConnection": DCAPI.Objects.PlaylistConnection,
+      "Query": DCAPI.Objects.Query,
+      "Shelf": DCAPI.Objects.Shelf
     ]
 
     static func objectType(forTypename typename: String) -> ApolloAPI.Object? {
