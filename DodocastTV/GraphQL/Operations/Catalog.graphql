@@ -123,3 +123,13 @@ query Media($id: ID!) {
     createdAt
   }
 }
+
+# Поиск по своему: название и описание, от 2 символов (сервер проверяет длину).
+query Search($text: String!) {
+  search(text: $text, page: { size: 40 }) {
+    totalCount
+    nodes {
+      ...MediaCard
+    }
+  }
+}

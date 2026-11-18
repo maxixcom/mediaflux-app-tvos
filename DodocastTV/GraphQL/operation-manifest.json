@@ -45,6 +45,12 @@
       "type": "query"
     },
     {
+      "id": "07d2728c41e864fea397c787f69a503d2a58544ba51d233c624a66dfcca8b8e3",
+      "body": "query Search($text: String!) { search(text: $text, page: { size: 40 }) { __typename totalCount nodes { __typename ...MediaCard } } }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }",
+      "name": "Search",
+      "type": "query"
+    },
+    {
       "id": "faa5bf79632f1a58da4c081ea9236e8b39f4e472dbac5250a94ad63e5a027fc4",
       "body": "query Me { me { __typename id name email deviceLimit deliveryBlock device { __typename ...DeviceFields } } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
       "name": "Me",

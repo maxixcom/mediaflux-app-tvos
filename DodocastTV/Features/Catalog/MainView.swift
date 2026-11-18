@@ -10,6 +10,8 @@ struct MainView: View {
         TabView {
             NavigationStack(path: $homePath) { HomeView().catalogDestinations() }
                 .tabItem { Label("Главная", systemImage: "house") }
+            NavigationStack { SearchView().catalogDestinations() }
+                .tabItem { Label("Поиск", systemImage: "magnifyingglass") }
             NavigationStack { LibraryIndexView().catalogDestinations() }
                 .tabItem { Label("Медиатека", systemImage: "square.stack") }
             NavigationStack { SettingsView() }

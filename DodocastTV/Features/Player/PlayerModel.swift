@@ -146,8 +146,11 @@ final class PlayerModel {
         }
     }
 
+    /// Такт отчёта. Наблюдатель AVPlayer зовётся и на перемотке, иногда дважды подряд, — поэтому «когда слали»
+    /// отмечаем здесь же, синхронно, а не в асинхронной отправке: иначе второй вызов проскакивает проверку.
     private func tickReport() {
         guard player.timeControlStatus == .playing, Date().timeIntervalSince(lastSent) >= Self.tick - 3 else { return }
+        lastSent = Date()
         Task { await report(final: false) }
     }
 
