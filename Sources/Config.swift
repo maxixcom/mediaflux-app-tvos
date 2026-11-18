@@ -5,7 +5,8 @@ import Foundation
 enum Config {
     static let streamer = URL(string: "https://stream.tst.media-flux.ru")!
     static let issuer = URL(string: "https://id.tst.media-flux.ru/realms/mediaflux")!
-    static let clientId = "mediaflux-tv"
+    /// Клиент Keycloak приложения на Apple TV (`mediaflux-app-<платформа>`, MF-88; до 18.11.2026 — `mediaflux-tv`).
+    static let clientId = "mediaflux-app-tvos"
 
     static let items: [TestItem] = [
         TestItem(kind: .media, code: "KcXy8AGnf9", note: "SAMPLE-AES, 20 с, вертикальное"),
