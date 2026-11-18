@@ -27,6 +27,7 @@ packages:
 fileGroups:
   - project.yml
   - README.md
+  - CLAUDE.md
   - apollo-codegen-config.json
   - scripts
 targets:

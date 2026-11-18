@@ -4,9 +4,10 @@
 `feature/mf-86-apps` (как во всех репозиториях MF-86).
 
 Две цели (`project.yml`, XcodeGen):
-- **`DodocastTV`** — клиент (MF-90, Э3, в работе): выбор сервера, вход по коду, устройство; дальше каталог, плеер с
-  позицией, поиск и настройки. Код — `DodocastTV/`, GraphQL — Apollo iOS 2.5 (`scripts/codegen.sh`), тесты —
-  `DodocastTVTests/`. Бренд — только в `DodocastTV/Brand`.
+- **`DodocastTV`** — клиент (MF-90, Э3): выбор сервера, вход по коду, устройство, главный экран из лент, медиатека,
+  карточки, плеер с позицией и главами, поиск, настройки. Код — `DodocastTV/`, GraphQL — Apollo iOS 2.5
+  (`scripts/codegen.sh`), тесты — `DodocastTVTests/`. Бренд — только в `DodocastTV/Brand`. Правила и грабли —
+  `CLAUDE.md`.
 - **`Spike`** — пробное приложение Э0 (MF-87, MF-97) без изменений, для замеров плеера. Ниже — про него.
 
 Сборка и запуск: `scripts/sim.sh` и `scripts/device.sh`, цель — `TARGET=DodocastTV` (по умолчанию) или `Spike`.

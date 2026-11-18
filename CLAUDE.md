@@ -1,0 +1,81 @@
+# CLAUDE.md
+
+Приложение dodocast для Apple TV — клиент бэкенда `mediaflux-app-api` (MF-86, этап Э3 — MF-90). Устройство и решения —
+`mediaflux-docs/docs/APPS.md` (ветка `feature/mf-86-apps`): §4 экраны, §5 вход, §5.1 выбор сервера, §6 устройства,
+§7 позиция, §8 воспроизведение, §10 ограничения GraphQL, §12 платформы.
+
+## Цели (`project.yml`, XcodeGen; `.xcodeproj` в git не лежит)
+
+- **`DodocastTV`** — клиент: SwiftUI, Swift 6, tvOS 17, bundle `com.dodocast.tv`, Apollo iOS 2.5.
+- **`DodocastTVTests`** — юнит-тесты без сети.
+- **`Spike`** — пробное приложение Э0 (MF-87, MF-97) без изменений, для замеров плеера (`scripts/tv-matrix.sh`).
+
+## Устройство клиента
+
+```
+DodocastTV/
+  App/        точка входа, AppModel — экран по состоянию: сервер → вход → устройство → главный
+  Brand/      имя, логотип, цвета, список серверов, иконка и полка — бренд ТОЛЬКО здесь
+  Core/       Server (сведения о сервере, версия), Auth (вход по коду, токены, Keychain), API (Apollo + ошибки),
+              Catalog (модели экранов), Player (главы, «Инфо», playbackStart), Progress (позиция и досылка), Images
+  Features/   Server, Login, Devices, Home, Catalog (вкладки, ленты, карточки), Player, Search, Settings
+  GraphQL/    Operations/*.graphql (пишем руками), Generated/ (кодогенерация, в git), operation-manifest.json
+  Resources/  Localizable.xcstrings (ru — исходный, en — перевод)
+```
+
+## Правила, которые легко нарушить
+
+- **Бренд — только в `Brand/`.** Код имени продукта не знает. Второй продукт на платформе — вторая цель со своим
+  `Brand/` (решение 18.11.2026). Иконку и полку рисует `scripts/brand-icon.swift` из логотипа брендбука.
+- **Цвета.** Маджента бренда в интерфейсе не используется (на телевизоре кричит, решение владельца): полоса
+  просмотренного — белая (`Brand.progressFill`), акцент приложения (`AccentColor`) — системный красный, как «В эфире».
+  Плашку «Трансляция» в плеере рисует AVKit своим цветом — она не перекрашивается.
+- **Новая GraphQL-операция:** `.graphql` в `GraphQL/Operations` → `scripts/codegen.sh` → сгенерированный код и
+  манифест в git → копия манифеста в `mediaflux-app-api/src/main/resources/operations/tvos-<версия>.json`. Сервер в
+  режиме `registered` (прод) принимает только операции из манифестов; на tst пока `open`.
+- **Apollo 2 шлёт `Accept: application/graphql-response+json`**, и по GraphQL over HTTP ответ без `data` (отказ
+  привратника: `RATE_LIMITED`, `OPERATION_NOT_REGISTERED`) приходит **400**. `AuthInterceptor` отдаёт 4xx с `errors`
+  разбору Apollo — иначе код ошибки теряется и человек видит «сервер недоступен».
+- **Регистрацию устройства на каждом старте не звать:** у неё лимит 5 в час на пользователя. Старт с сохранённым
+  входом — `me`: устройство подключено и версия та же — сразу главный экран (`AppModel.resumeSession`).
+- **Ошибки — `AppError(code, params)`**: фраза по коду в `AppError.message`, текст — в `Localizable.xcstrings`.
+  Ключ каталога — РОВНО строка из `String(localized:)` / `Text(...)` с `%@` / `%lld` на месте подстановок; множественное
+  число — вариациями `plural` (см. `%lld материалов`).
+- **Позиция (§7):** раз в 15 с во время игры, `final` на паузе, конце, выходе и уходе в фон; у канала позиции нет;
+  недосланное — `ProgressOutbox` (переживает перезапуск), досылается на старте, после удачного отчёта, перед выходом
+  и сменой сервера.
+- **Keychain:** `installation-id` не стирается никогда (с ним повторный вход не тратит слот устройства); refresh-токен
+  — у каждого сервера свой (`refresh:<host:port>`).
+- **Скаляр `Long` — `Int`:** файл `Generated/Schema/CustomScalars/Long.swift` свой, генератор его не перезаписывает.
+- **tvOS 17:** вкладки — `TabView` с `.tabItem`; `Tab` только с tvOS 18.
+
+## Сборка и запуск
+
+```bash
+xcodegen generate                         # проект из project.yml
+scripts/codegen.sh                        # после правки .graphql или схемы app-api
+scripts/sim.sh /tmp/run.log -server https://app.tst.media-flux.ru     # симулятор, клиент
+TARGET=Spike scripts/sim.sh /tmp/run.log -autoplay media:KcXy8AGnf9:mp4
+TV_DEVICE=<udid> DEVELOPMENT_TEAM=<team> scripts/device.sh /tmp/tv.log  # живой Apple TV
+xcodebuild test -project DodocastTV.xcodeproj -scheme DodocastTV \
+  -destination "platform=tvOS Simulator,name=Apple TV 4K (4th generation)" \
+  -clonedSourcePackagesDirPath build/SourcePackages
+```
+
+- **Аргументы запуска для проверок без пульта:** `-server <адрес>`, `-route media:<id> | library:<id> | playlist:<id>`,
+  `-play media:<id>[:beginning] | channel:<id>`. Журнал — строки `[DCTV]`; токены, коды входа и текст поиска в него
+  не пишутся.
+- **Локальная среда — только симулятор:** сведения о сервере отдают адреса `localhost` (Keycloak, GraphQL), на живом
+  телевизоре `localhost` — он сам. Адрес Mac в сети (`http://192.168.x.x:17091`) в симуляторе работает так же.
+- **Симулятор SAMPLE-AES не играет** (`-12155`) — шифрованное проверять на телевизоре.
+
+## Грабли окружения
+
+- **SPM не скачивает `apollo-ios`:** репозиторий большой, `fetch` рвётся («unexpected disconnect while reading
+  sideband packet»), Xcode висит на «Fetching … (cached)». Докачать кэш SPM руками и повторить разрешение:
+  `git -C ~/Library/Caches/org.swift.swiftpm/repositories/apollo-ios-* -c http.version=HTTP/1.1 fetch --tags origin`.
+  Из песочницы Claude Code — только вне её (SPM пишет кэш в `~/Library`).
+- **Симулятор в Xcode 27 — приложение Device Hub.** Ввод с клавиатуры Mac: Device → Keyboard → **Keyboard Capture
+  (⌘K)**, повторное ⌘K отпускает. Выбор буквы на экранной клавиатуре кнопкой «◎» Device Hub не срабатывает.
+- **CLI кодогенерации** — `apollo-ios-cli` той же версии, что пакет (2.5.0): `scripts/codegen.sh` скачивает его из
+  релиза apollographql/apollo-ios в `.build/` (вне git).
