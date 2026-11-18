@@ -5,3 +5,6 @@ DerivedData/
 xcuserdata/
 *.xcuserstate
 .DS_Store
+
+# Кодогенерация Apollo: CLI скачивается сюда (scripts/codegen.sh)
+.build/

@@ -1,0 +1,47 @@
+# Пользователь и устройства (APPS.md §6). Без зарегистрированного устройства сервер пропускает только эти операции:
+# упёршийся в лимит отключает лишнее прямо в приложении.
+
+fragment DeviceFields on Device {
+  id
+  name
+  platform
+  appVersion
+  lastSeenAt
+  createdAt
+  current
+}
+
+query Me {
+  me {
+    id
+    name
+    email
+    deviceLimit
+    deliveryBlock
+    device {
+      ...DeviceFields
+    }
+  }
+}
+
+query Devices {
+  devices {
+    ...DeviceFields
+  }
+}
+
+mutation DeviceRegister($input: DeviceRegisterInput!) {
+  deviceRegister(input: $input) {
+    ...DeviceFields
+  }
+}
+
+mutation DeviceRename($id: ID!, $name: String!) {
+  deviceRename(id: $id, name: $name) {
+    ...DeviceFields
+  }
+}
+
+mutation DeviceRevoke($id: ID!) {
+  deviceRevoke(id: $id)
+}

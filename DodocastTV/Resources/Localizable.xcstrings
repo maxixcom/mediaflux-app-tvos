@@ -1,0 +1,494 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "Аккаунт ещё не готов: один раз откройте личный кабинет в браузере и войдите." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account isn't ready yet: open your personal account in a browser and sign in once."
+          }
+        }
+      }
+    },
+    "Аккаунт заблокирован. Обратитесь в поддержку." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account is blocked. Please contact support."
+          }
+        }
+      }
+    },
+    "Был в сети: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last seen: %@"
+          }
+        }
+      }
+    },
+    "Версия приложения не подходит этому серверу." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app version doesn't work with this server."
+          }
+        }
+      }
+    },
+    "Вход" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in"
+          }
+        }
+      }
+    },
+    "Вход больше не действует — войдите заново." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your sign-in has expired — please sign in again."
+          }
+        }
+      }
+    },
+    "Вход отклонён на телефоне." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign-in was declined on the phone."
+          }
+        }
+      }
+    },
+    "Вы вошли" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're signed in"
+          }
+        }
+      }
+    },
+    "Выберите сервер" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a server"
+          }
+        }
+      }
+    },
+    "Выбрать сервер" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose server"
+          }
+        }
+      }
+    },
+    "Выйти" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign out"
+          }
+        }
+      }
+    },
+    "Другой адрес…" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other address…"
+          }
+        }
+      }
+    },
+    "Исчерпан лимит трафика тарифа." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your plan's traffic limit has been reached."
+          }
+        }
+      }
+    },
+    "Канал сейчас не в эфире." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The channel is off the air right now."
+          }
+        }
+      }
+    },
+    "Каналы не входят в ваш тариф." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Channels are not included in your plan."
+          }
+        }
+      }
+    },
+    "Код действует до %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code valid until %@"
+          }
+        }
+      }
+    },
+    "Код истёк. Получите новый." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The code has expired. Get a new one."
+          }
+        }
+      }
+    },
+    "Наведите камеру телефона на QR-код или откройте адрес и введите код:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point your phone's camera at the QR code, or open the address and enter the code:"
+          }
+        }
+      }
+    },
+    "Не найдено — возможно, материал удалён или скрыт." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not found — it may have been deleted or hidden."
+          }
+        }
+      }
+    },
+    "Не получилось" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        }
+      }
+    },
+    "Не похоже на адрес сервера" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This doesn't look like a server address"
+          }
+        }
+      }
+    },
+    "Нет связи с сервером. Проверьте подключение к сети." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't reach the server. Check your network connection."
+          }
+        }
+      }
+    },
+    "Нужна версия %@ или новее, установлена %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %1$@ or later is required, %2$@ is installed."
+          }
+        }
+      }
+    },
+    "Нужно обновить приложение" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update required"
+          }
+        }
+      }
+    },
+    "Отключить" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect"
+          }
+        }
+      }
+    },
+    "Повторить" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Подключено максимум устройств (%@). Отключите одно, чтобы подключить это." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The maximum number of devices (%@) is connected. Disconnect one to connect this one."
+          }
+        }
+      }
+    },
+    "Подключено много устройств" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many devices"
+          }
+        }
+      }
+    },
+    "Получить новый код" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get a new code"
+          }
+        }
+      }
+    },
+    "Просмотр приостановлен: на балансе минус. Пополните баланс в личном кабинете." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playback is suspended: your balance is negative. Top up in your personal account."
+          }
+        }
+      }
+    },
+    "Просмотр сейчас недоступен." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playback is unavailable right now."
+          }
+        }
+      }
+    },
+    "Сервер не отвечает. Проверьте сеть или выберите другой сервер." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server is not responding. Check your network or choose another server."
+          }
+        }
+      }
+    },
+    "Сервер не поддерживает Apple TV." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server doesn't support Apple TV."
+          }
+        }
+      }
+    },
+    "Сервер не принял запрос." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server rejected the request."
+          }
+        }
+      }
+    },
+    "Сервер недоступен" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server unavailable"
+          }
+        }
+      }
+    },
+    "Сервер перегружен. Повторите чуть позже." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server is busy. Please try again a bit later."
+          }
+        }
+      }
+    },
+    "Сервер: %@ · сменить" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server: %@ · change"
+          }
+        }
+      }
+    },
+    "Слишком много запросов. Повторите через %@ с." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many requests. Try again in %@ s."
+          }
+        }
+      }
+    },
+    "Сменить сервер" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change server"
+          }
+        }
+      }
+    },
+    "Стенд %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stand %@"
+          }
+        }
+      }
+    },
+    "Устройство не подключено — войдите заново." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This device isn't connected — please sign in again."
+          }
+        }
+      }
+    },
+    "Устройство: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device: %@"
+          }
+        }
+      }
+    },
+    "Что-то пошло не так (%@)." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong (%@)."
+          }
+        }
+      }
+    },
+    "Это устройство отключено — войдите заново." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This device has been disconnected — please sign in again."
+          }
+        }
+      }
+    },
+    "Этому приложению вход на сервер не разрешён." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app is not allowed to sign in to the server."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

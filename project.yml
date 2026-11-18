@@ -1,31 +1,94 @@
 # Проект Xcode генерируется из этого файла: `xcodegen generate` (сам .xcodeproj в git не лежит).
-# Пробное приложение Э0 (MF-87, часть MF-86): воспроизведение нашего HLS в AVPlayer и вход по коду.
+#
+# Цели:
+# - DodocastTV      — клиент Apple TV (MF-90, Э3): выбор сервера, вход по коду, каталог, плеер, позиция;
+# - DodocastTVTests — его юнит-тесты;
+# - Spike           — пробное приложение Э0 (MF-87, MF-97) без изменений: замеры плеера (`scripts/tv-matrix.sh`).
+#
+# Бренд (имя, bundle id, логотип, цвет, список серверов) — только в DodocastTV/Brand: код клиента бренда по имени не
+# знает. Второй продукт на той же платформе — вторая цель со своим Brand (APPS.md, решение 18.11.2026).
 name: DodocastTV
 options:
   bundleIdPrefix: com.dodocast
   deploymentTarget:
     tvOS: "17.0"
+  developmentLanguage: ru
 settings:
   base:
-    SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.0.1"
+    MARKETING_VERSION: "0.3.0"
     CURRENT_PROJECT_VERSION: "1"
     CODE_SIGN_STYLE: Automatic
+packages:
+  # Версия закреплена: тот же номер у CLI кодогенерации в scripts/codegen.sh — код и библиотека должны совпадать.
+  Apollo:
+    url: https://github.com/apollographql/apollo-ios.git
+    exactVersion: 2.5.0
+# Файлы вне сборки — только чтобы видеть их в навигаторе Xcode (группы без цели, в приложение не попадают).
+fileGroups:
+  - project.yml
+  - README.md
+  - apollo-codegen-config.json
+  - scripts
 targets:
   DodocastTV:
     type: application
     platform: tvOS
-    sources: [Sources]
-    scheme: {}
+    sources:
+      - path: DodocastTV
+        excludes:
+          - "GraphQL/**/*.graphql"
+          - "GraphQL/operation-manifest.json"
+    dependencies:
+      - package: Apollo
+        product: Apollo
+    scheme:
+      testTargets: [DodocastTVTests]
     info:
-      path: Sources/Info.plist
+      path: DodocastTV/Info.plist
       properties:
-        CFBundleDisplayName: dodocast Э0
+        CFBundleDisplayName: dodocast
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UIUserInterfaceStyle: Dark
+        UILaunchScreen: {}
+        # Локальная среда (http://localhost:17091) — только для симулятора: стенды ходят по HTTPS.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dodocast.tv
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_VERSION: "6.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        # Сборка для App Store скрывает выбор сервера (APPS.md §5.1): собирать с
+        # SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) APP_STORE'.
+  DodocastTVTests:
+    type: bundle.unit-test
+    platform: tvOS
+    sources: [DodocastTVTests]
+    dependencies:
+      - target: DodocastTV
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/DodocastTV.app/DodocastTV
+        BUNDLE_LOADER: $(TEST_HOST)
+  Spike:
+    type: application
+    platform: tvOS
+    sources: [Spike]
+    scheme: {}
+    info:
+      path: Spike/Info.plist
+      properties:
+        CFBundleDisplayName: dodocast Э0
+        CFBundleShortVersionString: "0.0.1"
+        CFBundleVersion: "1"
         UIUserInterfaceStyle: Automatic
     settings:
       base:
         # Отдельный идентификатор под спайк: бесплатная команда Apple закрепляет его за собой.
         PRODUCT_BUNDLE_IDENTIFIER: com.dodocast.tv.spike
         GENERATE_INFOPLIST_FILE: NO
+        SWIFT_VERSION: "5.0"

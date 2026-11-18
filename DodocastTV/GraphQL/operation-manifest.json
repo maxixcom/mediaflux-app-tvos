@@ -1,0 +1,36 @@
+{
+  "format": "apollo-persisted-query-manifest",
+  "version": 1,
+  "operations": [
+    {
+      "id": "faa5bf79632f1a58da4c081ea9236e8b39f4e472dbac5250a94ad63e5a027fc4",
+      "body": "query Me { me { __typename id name email deviceLimit deliveryBlock device { __typename ...DeviceFields } } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
+      "name": "Me",
+      "type": "query"
+    },
+    {
+      "id": "3096dfc092786fd94d0772d85b73222a9730374ada48318353b8f64362506c8a",
+      "body": "query Devices { devices { __typename ...DeviceFields } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
+      "name": "Devices",
+      "type": "query"
+    },
+    {
+      "id": "be3a6ddf1aa91ca766e50b76a3078dca886cfbdbbcc4c52ad9dc41c22678ddbf",
+      "body": "mutation DeviceRegister($input: DeviceRegisterInput!) { deviceRegister(input: $input) { __typename ...DeviceFields } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
+      "name": "DeviceRegister",
+      "type": "mutation"
+    },
+    {
+      "id": "7eba01e469ad5fbb7de0b433ccbbaa230ec2591ebd209b40726d0c41fc6e86b5",
+      "body": "mutation DeviceRename($id: ID!, $name: String!) { deviceRename(id: $id, name: $name) { __typename ...DeviceFields } }\nfragment DeviceFields on Device { __typename id name platform appVersion lastSeenAt createdAt current }",
+      "name": "DeviceRename",
+      "type": "mutation"
+    },
+    {
+      "id": "0b8157c1e291df322f549de9aa71f21206d081f08d827a00896975cd43b7946a",
+      "body": "mutation DeviceRevoke($id: ID!) { deviceRevoke(id: $id) }",
+      "name": "DeviceRevoke",
+      "type": "mutation"
+    }
+  ]
+}

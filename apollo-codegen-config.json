@@ -1,0 +1,36 @@
+{
+  "schemaNamespace": "DCAPI",
+  "input": {
+    "operationSearchPaths": [
+      "DodocastTV/GraphQL/Operations/*.graphql"
+    ],
+    "schemaSearchPaths": [
+      "../mediaflux-app-api/src/main/resources/graphql/*.graphqls"
+    ]
+  },
+  "output": {
+    "testMocks": {
+      "none": {}
+    },
+    "schemaTypes": {
+      "path": "./DodocastTV/GraphQL/Generated",
+      "moduleType": {
+        "embeddedInTarget": {
+          "name": "DodocastTV",
+          "accessModifier": "internal"
+        }
+      }
+    },
+    "operations": {
+      "inSchemaModule": {}
+    }
+  },
+  "operationManifest": {
+    "path": "./DodocastTV/GraphQL/operation-manifest.json",
+    "version": "persistedQueries",
+    "generateManifestOnCodeGeneration": true
+  },
+  "options": {
+    "pruneGeneratedFiles": true
+  }
+}
