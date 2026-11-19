@@ -3,6 +3,7 @@
 # Цели:
 # - DodocastTV      — клиент Apple TV (MF-90, Э3): выбор сервера, вход по коду, каталог, плеер, позиция;
 # - DodocastTVTests — его юнит-тесты;
+# - DodocastTVUITests — сценарии на симуляторе с пультом (`scripts/ui-check.sh`, схема DodocastTVScenarios);
 # - Spike           — пробное приложение Э0 (MF-87, MF-97) без изменений: замеры плеера (`scripts/tv-matrix.sh`).
 #
 # Бренд (имя, bundle id, логотип, цвет, список серверов) — только в DodocastTV/Brand: код клиента бренда по имени не
@@ -10,8 +11,9 @@
 name: DodocastTV
 options:
   bundleIdPrefix: com.dodocast
+  # tvOS 18: боковое меню разделов (`Tab`, `.sidebarAdaptable`), как у приложения Apple TV. Железо то же, что у 17.
   deploymentTarget:
-    tvOS: "17.0"
+    tvOS: "18.0"
   developmentLanguage: ru
 settings:
   base:
@@ -77,6 +79,19 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/DodocastTV.app/DodocastTV
         BUNDLE_LOADER: $(TEST_HOST)
+  # Сценарии на симуляторе с пультом (XCUIRemote): фокус, переходы, «Назад». Нужны вход на симуляторе и живой сервер,
+  # поэтому — своя схема DodocastTVScenarios, а не тесты схемы клиента. Запуск — scripts/ui-check.sh.
+  DodocastTVUITests:
+    type: bundle.ui-testing
+    platform: tvOS
+    sources: [DodocastTVUITests]
+    dependencies:
+      - target: DodocastTV
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: DodocastTV
   Spike:
     type: application
     platform: tvOS
@@ -95,3 +110,12 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.dodocast.tv.spike
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_VERSION: "5.0"
+schemes:
+  DodocastTVScenarios:
+    build:
+      targets:
+        DodocastTV: all
+        DodocastTVUITests: [test]
+    test:
+      config: Debug
+      targets: [DodocastTVUITests]

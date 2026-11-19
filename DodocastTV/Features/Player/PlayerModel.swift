@@ -31,8 +31,10 @@ final class PlayerModel {
     private var mediaId: String?
     private var info: PlaybackInfo?
     private var lastSent = Date.distantPast
-    /// Последний `final`: в конце ролика AVPlayer сам ставит паузу, и «конец» с «паузой» дали бы два одинаковых отчёта.
-    private var lastFinal: (positionMs: Int, at: Date)?
+    /// Последний отправленный отчёт. `final` на том же месте сразу после `final` ничего не меняет — его не шлём:
+    /// в конце ролика AVPlayer сам ставит паузу («конец» и «пауза»), а выход из плеера после конца дал бы ещё один
+    /// такой же (телевизор, 19.11.2026). Такт между ними сбрасывает отсев: перемотали назад и встали — отчёт нужен.
+    private var lastReport: (mediaId: String, positionMs: Int, final: Bool)?
     private var wasPlaying = false
     private var observers: [NSKeyValueObservation] = []
     private var timeObserver: Any?
@@ -177,10 +179,10 @@ final class PlayerModel {
         guard let sender, let mediaId, !isLive else { return }
         let position = explicit ?? positionMs
         guard position >= 1000 else { return }
-        if final {
-            if let last = lastFinal, abs(last.positionMs - position) < 2000, Date().timeIntervalSince(last.at) < 5 { return }
-            lastFinal = (position, Date())
+        if final, let last = lastReport, last.final, last.mediaId == mediaId, abs(last.positionMs - position) < 2000 {
+            return
         }
+        lastReport = (mediaId, position, final)
         lastSent = Date()
         let r = ProgressReport(mediaId: mediaId, positionMs: position, durationMs: info?.durationMs,
                                reportedAt: Date(), final: final)

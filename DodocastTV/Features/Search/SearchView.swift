@@ -3,7 +3,8 @@ import SwiftUI
 /// Поиск по своим материалам: штатная строка поиска tvOS, запрос — от 2 символов, после паузы в наборе.
 struct SearchView: View {
     @Environment(AppModel.self) private var app
-    @State private var text = ""
+    /// Начальный текст — для проверок без пульта: `-search temp`.
+    @State private var text = LaunchArgument.value("-search") ?? ""
     @State private var results: [MediaItem] = []
     @State private var total = 0
     @State private var searching = false

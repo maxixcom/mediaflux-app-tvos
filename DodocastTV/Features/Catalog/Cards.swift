@@ -27,6 +27,8 @@ struct MediaCard: View {
                     .clipped()
             }
             .buttonStyle(.card)
+            // У кнопки — только картинка; подпись — для VoiceOver и сценариев UI-тестов.
+            .accessibilityLabel(item.title)
             CardTitle(text: item.title, subtitle: item.durationMs.map(Format.duration))
         }
         .frame(width: CardSize.width)

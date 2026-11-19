@@ -6,8 +6,10 @@
 
 ## Цели (`project.yml`, XcodeGen; `.xcodeproj` в git не лежит)
 
-- **`DodocastTV`** — клиент: SwiftUI, Swift 6, tvOS 17, bundle `com.dodocast.tv`, Apollo iOS 2.5.
+- **`DodocastTV`** — клиент: SwiftUI, Swift 6, tvOS 18+, bundle `com.dodocast.tv`, Apollo iOS 2.5.
 - **`DodocastTVTests`** — юнит-тесты без сети.
+- **`DodocastTVUITests`** — сценарии на симуляторе с пультом (`XCUIRemote`): фокус, переходы, «Назад», снимки экрана.
+  Своя схема `DodocastTVScenarios`: нужны вход на симуляторе и живой сервер, в обычный прогон тестов не входят.
 - **`Spike`** — пробное приложение Э0 (MF-87, MF-97) без изменений, для замеров плеера (`scripts/tv-matrix.sh`).
 
 ## Устройство клиента
@@ -47,7 +49,16 @@ DodocastTV/
 - **Keychain:** `installation-id` не стирается никогда (с ним повторный вход не тратит слот устройства); refresh-токен
   — у каждого сервера свой (`refresh:<host:port>`).
 - **Скаляр `Long` — `Int`:** файл `Generated/Schema/CustomScalars/Long.swift` свой, генератор его не перезаписывает.
-- **tvOS 17:** вкладки — `TabView` с `.tabItem`; `Tab` только с tvOS 18.
+- **Навигация — боковое меню, как у приложения Apple TV** (tvOS 18+, решение 19.11.2026): `TabView` с `Tab` и
+  `.tabViewStyle(.sidebarAdaptable)`, поиск — первым пунктом с `role: .search`. Меню сворачивается в плашку раздела,
+  карточки — на весь экран; «Назад» — на шаг, с корня раздела — меню, из меню — из приложения. Повторный выбор раздела
+  в меню SwiftUI сообщает привязкой выбора — по нему раздел возвращается к началу (`MainView.tabSelection`).
+  - Прежняя полоса вкладок (tvOS 17, `.tabItem`) не годилась: над карточкой висела полоса, Select на вкладке уводил
+    фокус в содержимое (документация `UITabBarController`, «Differences between iOS and tvOS»), повторного выбора
+    SwiftUI не сообщал — владелец «застревал» в карточке поиска.
+  - Шапка меню (`tabViewSidebarHeader`) — только с tvOS 27, на 18–26 меню без неё.
+- **Правку интерфейса сначала проверяю сценарием на симуляторе** (`scripts/ui-check.sh`, снимки смотрю), потом —
+  телевизор. Жалобу на поведение — сначала воспроизвести сценарием по пути владельца, потом менять.
 
 ## Сборка и запуск
 
@@ -57,13 +68,14 @@ scripts/codegen.sh                        # после правки .graphql и�
 scripts/sim.sh /tmp/run.log -server https://app.tst.media-flux.ru     # симулятор, клиент
 TARGET=Spike scripts/sim.sh /tmp/run.log -autoplay media:KcXy8AGnf9:mp4
 TV_DEVICE=<udid> DEVELOPMENT_TEAM=<team> scripts/device.sh /tmp/tv.log  # живой Apple TV
+scripts/ui-check.sh /tmp/shots SearchScenarioTests     # сценарии с пультом на загруженном симуляторе, снимки в каталог
 xcodebuild test -project DodocastTV.xcodeproj -scheme DodocastTV \
   -destination "platform=tvOS Simulator,name=Apple TV 4K (4th generation)" \
   -clonedSourcePackagesDirPath build/SourcePackages
 ```
 
-- **Аргументы запуска для проверок без пульта:** `-server <адрес>`, `-route media:<id> | library:<id> | playlist:<id>`,
-  `-play media:<id>[:beginning] | channel:<id>`. Журнал — строки `[DCTV]`; токены, коды входа и текст поиска в него
+- **Аргументы запуска для проверок без пульта:** `-server <адрес>`, `-tab home | search | library | settings`,
+  `-search <текст>`, `-route media:<id> | library:<id> | playlist:<id>`, `-play media:<id>[:beginning] | channel:<id>`. Журнал — строки `[DCTV]`; токены, коды входа и текст поиска в него
   не пишутся.
 - **Локальная среда — только симулятор:** сведения о сервере отдают адреса `localhost` (Keycloak, GraphQL), на живом
   телевизоре `localhost` — он сам. Адрес Mac в сети (`http://192.168.x.x:17091`) в симуляторе работает так же.
@@ -77,5 +89,7 @@ xcodebuild test -project DodocastTV.xcodeproj -scheme DodocastTV \
   Из песочницы Claude Code — только вне её (SPM пишет кэш в `~/Library`).
 - **Симулятор в Xcode 27 — приложение Device Hub.** Ввод с клавиатуры Mac: Device → Keyboard → **Keyboard Capture
   (⌘K)**, повторное ⌘K отпускает. Выбор буквы на экранной клавиатуре кнопкой «◎» Device Hub не срабатывает.
+- **Xcode при сборке переписывает `Localizable.xcstrings`** — свой формат (` : `) и отметки `stale`. Если ключи и
+  переводы не менялись (сверка без `extractionState`), дифф откатить перед коммитом, а не тащить в историю.
 - **CLI кодогенерации** — `apollo-ios-cli` той же версии, что пакет (2.5.0): `scripts/codegen.sh` скачивает его из
   релиза apollographql/apollo-ios в `.build/` (вне git).
