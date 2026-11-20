@@ -960,6 +960,66 @@
           }
         }
       }
+    },
+    "История поиска очищена": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search history cleared"
+          }
+        }
+      }
+    },
+    "Недавние поиски": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent Searches"
+          }
+        }
+      }
+    },
+    "Недавние поиски общие для всех устройств этого аккаунта.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent searches are shared by all devices on this account."
+          }
+        }
+      }
+    },
+    "Очистить": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        }
+      }
+    },
+    "Очистить историю поиска": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear Search History"
+          }
+        }
+      }
+    },
+    "Очистить историю поиска на всех устройствах этого аккаунта?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search history on all devices on this account?"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

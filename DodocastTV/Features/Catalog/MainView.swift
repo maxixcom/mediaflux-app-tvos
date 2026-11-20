@@ -16,7 +16,7 @@ struct MainView: View {
     var body: some View {
         TabView(selection: tabSelection) {
             Tab("Поиск", systemImage: "magnifyingglass", value: MainTab.search, role: .search) {
-                NavigationStack(path: $searchPath) { SearchView().catalogDestinations() }
+                NavigationStack(path: $searchPath) { SearchView(path: $searchPath).catalogDestinations() }
             }
             Tab("Главная", systemImage: "house", value: MainTab.home) {
                 NavigationStack(path: $homePath) { HomeView().catalogDestinations() }

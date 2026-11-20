@@ -190,6 +190,21 @@ struct Catalog: Sendable {
             _ = try await api.perform(DCAPI.FavoriteRemoveMutation(target: target.input))
         }
     }
+
+    /// Недавние поиски (MF-114): материалы, на чьи карточки переходили из поиска, свежие первыми; общие на аккаунт.
+    func searchRecents() async throws -> [MediaItem] {
+        try await api.fetch(DCAPI.SearchRecentsQuery()).searchRecents.map { MediaItem($0.fragments.mediaCard) }
+    }
+
+    /// Выбор из поиска — материал первым в недавних.
+    func addSearchRecent(_ mediaId: String) async throws {
+        _ = try await api.perform(DCAPI.SearchRecentAddMutation(mediaId: mediaId))
+    }
+
+    /// Очистить недавние поиски — на всех устройствах аккаунта.
+    func clearSearchRecents() async throws {
+        _ = try await api.perform(DCAPI.SearchRecentsClearMutation())
+    }
 }
 
 extension MediaItem {

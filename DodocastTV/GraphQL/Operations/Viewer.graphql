@@ -1,4 +1,4 @@
-# Состояние зрителя (APPS.md §7): «просмотрено» и избранное. Позиция просмотра — в плеере (шаг 3.3).
+# Состояние зрителя (APPS.md §7): «просмотрено», избранное, недавние поиски. Позиция просмотра — в плеере (шаг 3.3).
 
 mutation MarkWatched($mediaId: ID!, $watched: Boolean!) {
   markWatched(mediaId: $mediaId, watched: $watched) {
@@ -13,4 +13,19 @@ mutation FavoriteAdd($target: FavoriteTargetInput!) {
 
 mutation FavoriteRemove($target: FavoriteTargetInput!) {
   favoriteRemove(target: $target)
+}
+
+# Недавние поиски (MF-114): материалы, на чьи карточки переходили из поиска, общие на аккаунт.
+query SearchRecents {
+  searchRecents {
+    ...MediaCard
+  }
+}
+
+mutation SearchRecentAdd($mediaId: ID!) {
+  searchRecentAdd(mediaId: $mediaId)
+}
+
+mutation SearchRecentsClear {
+  searchRecentsClear
 }

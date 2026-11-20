@@ -1,12 +1,16 @@
 import SwiftUI
 
-/// Настройки: аккаунт, это устройство (имя), подключённые устройства с «Отключить», сервер, выход, версия (§5.1, §6).
+/// Настройки: аккаунт, это устройство (имя), подключённые устройства с «Отключить», история поиска, сервер, выход,
+/// версия (§5.1, §6, MF-114).
 struct SettingsView: View {
     @Environment(AppModel.self) private var app
     @State private var devices: [DCAPI.DeviceFields] = []
     @State private var confirmRevoke: DCAPI.DeviceFields?
     @State private var confirmSignOut = false
     @State private var error: AppError?
+    @State private var confirmClearSearch = false
+    @State private var searchCleared = false
+    @State private var searchError: AppError?
 
     var body: some View {
         List {
@@ -37,6 +41,15 @@ struct SettingsView: View {
                 }
                 if let error { Text(error.message).foregroundStyle(.secondary) }
             }
+            Section {
+                Button("Очистить историю поиска") { confirmClearSearch = true }
+                if searchCleared { Text("История поиска очищена").foregroundStyle(.secondary) }
+                if let searchError { Text(searchError.message).foregroundStyle(.secondary) }
+            } header: {
+                Text("Поиск")
+            } footer: {
+                Text("Недавние поиски общие для всех устройств этого аккаунта.")
+            }
             Section("Сервер") {
                 if let server = app.server {
                     LabeledContent("Адрес", value: server.url.host() ?? server.url.absoluteString)
@@ -66,6 +79,26 @@ struct SettingsView: View {
         }
         .confirmationDialog("Выйти из аккаунта на этом устройстве?", isPresented: $confirmSignOut, titleVisibility: .visible) {
             Button("Выйти", role: .destructive) { Task { await app.signOut() } }
+        }
+        .confirmationDialog("Очистить историю поиска на всех устройствах этого аккаунта?", isPresented: $confirmClearSearch,
+                            titleVisibility: .visible) {
+            Button("Очистить", role: .destructive) { clearSearchHistory() }
+        }
+    }
+
+    /// Недавние поиски общие на аккаунт (MF-114) — очистка убирает их на всех телевизорах.
+    private func clearSearchHistory() {
+        guard let catalog = app.catalog else { return }
+        Task {
+            do {
+                try await catalog.clearSearchRecents()
+                searchCleared = true
+                searchError = nil
+            } catch is CancellationError {
+            } catch {
+                let e = AppError.from(error)
+                if e.needsSignIn { await app.handle(e) } else { searchError = e }
+            }
         }
     }
 

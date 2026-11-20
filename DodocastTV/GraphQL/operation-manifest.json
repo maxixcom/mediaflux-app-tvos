@@ -99,6 +99,24 @@
       "type": "mutation"
     },
     {
+      "id": "45468bec0f98abec2bd44721eb0ade15a501212806f5d8b434de0fcf2dd33e10",
+      "body": "query SearchRecents { searchRecents { __typename ...MediaCard } }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }",
+      "name": "SearchRecents",
+      "type": "query"
+    },
+    {
+      "id": "0d40f5f86974a171fdfc360cb1b65b4d1b3f10941e62d47b20124057023b081f",
+      "body": "mutation SearchRecentAdd($mediaId: ID!) { searchRecentAdd(mediaId: $mediaId) }",
+      "name": "SearchRecentAdd",
+      "type": "mutation"
+    },
+    {
+      "id": "acf944552901a1d9b59b8de879f7ec0963ee59a42e4bd71ae6e9ad3762a9576f",
+      "body": "mutation SearchRecentsClear { searchRecentsClear }",
+      "name": "SearchRecentsClear",
+      "type": "mutation"
+    },
+    {
       "id": "2ca331ad13e352113fab5d5075bd181aa190e7c12b3209139d5ec077c7194090",
       "body": "mutation PlaybackStart($input: PlaybackStartInput!) { playbackStart(input: $input) { __typename url expiresAt title durationMs chapters { __typename startMs title } coverUrl previewManifestUrl resumePositionMs } }",
       "name": "PlaybackStart",
