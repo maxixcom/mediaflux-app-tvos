@@ -45,6 +45,8 @@ struct ChannelItem: Identifiable, Hashable, Sendable {
     let id: String
     let title: String
     let onAir: Bool
+    /// Своей обложки у канала нет — сервер отдаёт обложку первого ролика программы, у которого она есть.
+    let coverURL: URL?
     var favorite: Bool
     var description: String?
 }
@@ -211,6 +213,7 @@ extension PlaylistItem {
 
 extension ChannelItem {
     init(_ f: DCAPI.ChannelCard) {
-        self.init(id: f.id, title: f.title, onAir: f.onAir, favorite: f.favorite, description: nil)
+        self.init(id: f.id, title: f.title, onAir: f.onAir, coverURL: f.coverUrl.flatMap(URL.init(string:)),
+                  favorite: f.favorite, description: nil)
     }
 }

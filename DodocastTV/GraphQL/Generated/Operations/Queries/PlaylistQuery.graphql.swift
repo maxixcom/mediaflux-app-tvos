@@ -60,7 +60,7 @@ extension DCAPI {
         var id: DCAPI.ID { __data["id"] }
         var title: String { __data["title"] }
         var itemCount: Int { __data["itemCount"] }
-        /// Обложка первого элемента.
+        /// Обложка первого элемента, у которого она есть (как в кабинете).
         var coverUrl: String? { __data["coverUrl"] }
         var favorite: Bool { __data["favorite"] }
 

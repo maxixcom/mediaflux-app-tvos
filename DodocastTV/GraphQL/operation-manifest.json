@@ -3,8 +3,8 @@
   "version": 1,
   "operations": [
     {
-      "id": "ca00cb5b3f1143eb3a71618ba3d6be4079e469e8c3995769866ae5d0601ddbf5",
-      "body": "query Home { home { __typename continueWatching { __typename ...MediaCard } recent { __typename ...MediaCard } favorites { __typename ... on Media { ...MediaCard } ... on Playlist { ...PlaylistCard } ... on Channel { ...ChannelCard } } shelves { __typename library { __typename id title itemCount } items { __typename ...MediaCard } } channels { __typename ...ChannelCard } } }\nfragment ChannelCard on Channel { __typename id title onAir favorite }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }\nfragment PlaylistCard on Playlist { __typename id title itemCount coverUrl favorite }",
+      "id": "45f2db517182a03d6c7c8b477aed836c3d437f66de628850d260c74ab8809a82",
+      "body": "query Home { home { __typename continueWatching { __typename ...MediaCard } recent { __typename ...MediaCard } favorites { __typename ... on Media { ...MediaCard } ... on Playlist { ...PlaylistCard } ... on Channel { ...ChannelCard } } shelves { __typename library { __typename id title itemCount } items { __typename ...MediaCard } } channels { __typename ...ChannelCard } } }\nfragment ChannelCard on Channel { __typename id title onAir coverUrl favorite }\nfragment MediaCard on Media { __typename id title durationMs coverUrl favorite progress { __typename positionMs durationMs watched } }\nfragment PlaylistCard on Playlist { __typename id title itemCount coverUrl favorite }",
       "name": "Home",
       "type": "query"
     },
@@ -33,8 +33,8 @@
       "type": "query"
     },
     {
-      "id": "6cfcafcbd5da813afdd1ef9540289144bea9877e2c04e4643dfd7f406bb6fe66",
-      "body": "query Channels { channels { __typename ...ChannelCard description } }\nfragment ChannelCard on Channel { __typename id title onAir favorite }",
+      "id": "be1ebe403c53975dbf1c094d05b17751cb035e84a8e8f921fa20aba4870868cc",
+      "body": "query Channels { channels { __typename ...ChannelCard description } }\nfragment ChannelCard on Channel { __typename id title onAir coverUrl favorite }",
       "name": "Channels",
       "type": "query"
     },

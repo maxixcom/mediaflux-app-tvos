@@ -141,29 +141,33 @@ private struct PlaylistContent: View {
     }
 }
 
-/// Канал: название, «в эфире», описание, «Смотреть» (живой эфир, без позиции), избранное.
+/// Канал — как карточка медиа: обложка слева (первого ролика программы, своей у канала нет), справа название,
+/// «в эфире», описание, «Смотреть» (живой эфир, без позиции) и избранное.
 struct ChannelView: View {
     @State var item: ChannelItem
     @State private var play: PlayRequest?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
-            HStack(spacing: 24) {
-                Text(item.title).font(.title2.weight(.semibold))
+        HStack(alignment: .top, spacing: 64) {
+            RemoteImage(url: item.coverURL, placeholder: "tv")
+                .frame(width: 880, height: 495)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            VStack(alignment: .leading, spacing: 28) {
+                Text(item.title).font(.title2.weight(.semibold)).lineLimit(3)
                 if item.onAir { OnAirBadge() } else { Text("Не в эфире").foregroundStyle(.secondary) }
+                if let description = item.description, !description.isEmpty {
+                    Text(description).font(.callout).foregroundStyle(.secondary).lineLimit(6)
+                }
+                HStack(spacing: 32) {
+                    Button("Смотреть", systemImage: "play.fill") { play = .channel(item.id) }
+                    FavoriteButton(target: .channel(item.id), isOn: $item.favorite)
+                }
             }
-            if let description = item.description, !description.isEmpty {
-                Text(description).foregroundStyle(.secondary).frame(maxWidth: 1400, alignment: .leading)
-            }
-            HStack(spacing: 32) {
-                Button("Смотреть", systemImage: "play.fill") { play = .channel(item.id) }
-                FavoriteButton(target: .channel(item.id), isOn: $item.favorite)
-            }
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(80)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .fullScreenCover(item: $play) { PlayerView(request: $0) }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .fullScreenCover(item: $play) { PlayerView(request: $0, description: item.description) }
     }
 }
 

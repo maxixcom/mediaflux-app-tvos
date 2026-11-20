@@ -71,33 +71,32 @@ struct PlaylistCard: View {
                     .clipped()
             }
             .buttonStyle(.card)
+            .accessibilityLabel(item.title)
             CardTitle(text: item.title, subtitle: Format.itemCount(item.itemCount))
         }
         .frame(width: CardSize.width)
     }
 }
 
-/// Карточка канала: своей обложки у канала нет — название на фоне и отметка «в эфире».
+/// Карточка канала: обложка первого ролика программы (своей у канала нет), без неё — значок; отметка «в эфире».
 struct ChannelCard: View {
     let item: ChannelItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             NavigationLink(value: Route.channel(item)) {
-                ZStack {
-                    LinearGradient(colors: [Color(white: 0.24), Color(white: 0.1)], startPoint: .topLeading,
-                                   endPoint: .bottomTrailing)
-                    Image(systemName: "tv").font(.system(size: 56)).foregroundStyle(.secondary)
-                }
-                .frame(width: CardSize.width, height: CardSize.height)
-                .overlay(alignment: .topLeading) {
-                    if item.onAir { OnAirBadge().padding(12) }
-                }
-                .overlay(alignment: .topTrailing) {
-                    if item.favorite { Badge(systemName: "heart.fill").padding(12) }
-                }
+                RemoteImage(url: item.coverURL, placeholder: "tv")
+                    .frame(width: CardSize.width, height: CardSize.height)
+                    .overlay(alignment: .topLeading) {
+                        if item.onAir { OnAirBadge().padding(12) }
+                    }
+                    .overlay(alignment: .topTrailing) {
+                        if item.favorite { Badge(systemName: "heart.fill").padding(12) }
+                    }
+                    .clipped()
             }
             .buttonStyle(.card)
+            .accessibilityLabel(item.title)
             CardTitle(text: item.title, subtitle: nil)
         }
         .frame(width: CardSize.width)

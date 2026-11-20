@@ -53,6 +53,8 @@ extension DCAPI {
         var title: String { __data["title"] }
         /// Канал сейчас вещает: запущен, не остановлен, программа не пуста.
         var onAir: Bool { __data["onAir"] }
+        /// Своей обложки у канала нет: обложка первого ролика текущей программы, у которого она есть (как в кабинете).
+        var coverUrl: String? { __data["coverUrl"] }
         var favorite: Bool { __data["favorite"] }
 
         struct Fragments: FragmentContainer {

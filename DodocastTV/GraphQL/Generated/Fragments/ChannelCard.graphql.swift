@@ -7,7 +7,7 @@
 extension DCAPI {
   nonisolated struct ChannelCard: DCAPI.SelectionSet, Fragment {
     static var fragmentDefinition: StaticString {
-      #"fragment ChannelCard on Channel { __typename id title onAir favorite }"#
+      #"fragment ChannelCard on Channel { __typename id title onAir coverUrl favorite }"#
     }
 
     let __data: DataDict
@@ -19,6 +19,7 @@ extension DCAPI {
       .field("id", DCAPI.ID.self),
       .field("title", String.self),
       .field("onAir", Bool.self),
+      .field("coverUrl", String?.self),
       .field("favorite", Bool.self),
     ] }
     static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
@@ -29,6 +30,8 @@ extension DCAPI {
     var title: String { __data["title"] }
     /// Канал сейчас вещает: запущен, не остановлен, программа не пуста.
     var onAir: Bool { __data["onAir"] }
+    /// Своей обложки у канала нет: обложка первого ролика текущей программы, у которого она есть (как в кабинете).
+    var coverUrl: String? { __data["coverUrl"] }
     var favorite: Bool { __data["favorite"] }
   }
 
