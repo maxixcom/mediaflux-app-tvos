@@ -143,8 +143,9 @@ struct Loadable<Value, Content: View>: View {
     @Environment(AppModel.self) private var app
     let load: (Catalog) async throws -> Value
     @ViewBuilder let content: (Value) -> Content
-    /// Перезагружать при каждом возврате на экран (ленты, избранное после карточки).
-    var reloadOnAppear = false
+    /// Перечитывать при своём изменении состояния зрителя (`AppModel.viewerRevision`, MF-116): ленты, полосы и сердечки
+    /// после карточки и плеера. Не «при появлении»: с боковым меню при возврате из стека раздела оно не приходит.
+    var reloadOnViewerChange = false
 
     @State private var value: Value?
     @State private var error: AppError?
@@ -162,10 +163,8 @@ struct Loadable<Value, Content: View>: View {
                 ProgressView()
             }
         }
-        .task { await run() }
-        .onAppear {
-            if reloadOnAppear, value != nil { Task { await run() } }
-        }
+        // Первая загрузка и перечитывание по смене номера — одна задача; при сбое перечитывания остаётся прежнее.
+        .task(id: reloadOnViewerChange ? app.viewerRevision : 0) { await run() }
     }
 
     private func run() async {

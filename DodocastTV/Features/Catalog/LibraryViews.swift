@@ -29,7 +29,7 @@ struct LibraryIndexView: View {
                 }
                 .padding(.vertical, 40)
             }
-        }, reloadOnAppear: true)
+        }, reloadOnViewerChange: true)
     }
 }
 
@@ -67,6 +67,28 @@ struct LibraryView: View {
             .padding(80)
         }
         .task { if items.isEmpty { await loadMore() } }
+        .onChange(of: app.viewerRevision) { Task { await reloadLoaded() } }
+    }
+
+    /// Своё изменение состояния зрителя (MF-116): перечитать уже загруженные страницы — полосы и сердечки на карточках
+    /// свежие, прокрутка на месте. Сбой — остаётся прежнее (кроме «нужен вход»).
+    private func reloadLoaded() async {
+        guard !loading, page > 0, let catalog = app.catalog else { return }
+        loading = true
+        defer { loading = false }
+        do {
+            var fresh: [MediaItem] = []
+            for p in 0..<page {
+                guard let data = try await catalog.library(ref.id, page: p) else { return }
+                fresh += data.items.filter { new in !fresh.contains { $0.id == new.id } }
+                total = data.totalCount
+            }
+            items = fresh
+        } catch is CancellationError {
+        } catch {
+            let e = AppError.from(error)
+            if e.needsSignIn { await app.handle(e) }
+        }
     }
 
     private func loadMore() async {
@@ -102,7 +124,7 @@ struct PlaylistView: View {
             } else {
                 Text(AppError(.notFound).message)
             }
-        }, reloadOnAppear: true)
+        }, reloadOnViewerChange: true)
     }
 }
 
@@ -196,6 +218,7 @@ struct FavoriteButton: View {
             defer { busy = false }
             do {
                 try await catalog.setFavorite(target, new)
+                app.viewerChanged()
             } catch {
                 isOn = !new
                 let e = AppError.from(error)

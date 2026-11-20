@@ -12,7 +12,7 @@ struct MediaDetailView: View {
             } else {
                 Text(AppError(.notFound).message)
             }
-        }, reloadOnAppear: true)
+        })
     }
 }
 
@@ -30,6 +30,8 @@ private struct MediaDetailContent: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
             VStack(alignment: .leading, spacing: 28) {
                 Text(item.title).font(.title2.weight(.semibold)).lineLimit(3)
+                    // Сценарии проверяют по нему, что открыта нужная карточка (главная остаётся в дереве под ней).
+                    .accessibilityIdentifier("media-detail-title")
                 meta
                 if let description = item.description, !description.isEmpty {
                     Text(description).font(.callout).foregroundStyle(.secondary).lineLimit(6)
@@ -105,6 +107,7 @@ private struct MediaDetailContent: View {
                 let p = try await catalog.markWatched(item.id, watched)
                 item.progress = ViewProgress(positionMs: p.positionMs, durationMs: item.durationMs, watched: p.watched)
                 error = nil
+                app.viewerChanged()
             } catch {
                 let e = AppError.from(error)
                 if e.needsSignIn { await app.handle(e) } else { self.error = e }

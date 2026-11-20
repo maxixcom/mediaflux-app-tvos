@@ -40,7 +40,11 @@ struct PlayerView: View {
         }
         .onDisappear {
             guard let model else { return }
-            Task { await model.stop() }
+            Task {
+                await model.stop()
+                // Финальная позиция ушла (или ждёт в ProgressOutbox) — ленты «Продолжить просмотр» и полосы перечитаются.
+                if !model.isLive { app.viewerChanged() }
+            }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active, let model { Task { await model.report(final: true) } }

@@ -27,11 +27,20 @@ struct MediaCard: View {
                     .clipped()
             }
             .buttonStyle(.card)
-            // У кнопки — только картинка; подпись — для VoiceOver и сценариев UI-тестов.
+            // У кнопки — только картинка; подпись и состояние — для VoiceOver и сценариев UI-тестов.
             .accessibilityLabel(item.title)
+            .accessibilityValue(stateDescription)
             CardTitle(text: item.title, subtitle: item.durationMs.map(Format.duration))
         }
         .frame(width: CardSize.width)
+    }
+
+    /// Что видно значками на обложке: «В избранном», «Просмотрено».
+    private var stateDescription: String {
+        var parts: [String] = []
+        if item.favorite { parts.append(String(localized: "В избранном")) }
+        if item.watched { parts.append(String(localized: "Просмотрено")) }
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder private var progressBar: some View {
@@ -114,6 +123,7 @@ struct LibraryCard: View {
                     .clipped()
             }
             .buttonStyle(.card)
+            .accessibilityLabel(item.title)
             CardTitle(text: item.title, subtitle: Format.itemCount(item.itemCount))
         }
         .frame(width: CardSize.width)

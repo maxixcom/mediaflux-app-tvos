@@ -45,6 +45,14 @@ final class AppModel {
     private(set) var session: Session?
     private(set) var account: Account?
 
+    /// Номер версии состояния зрителя (MF-116): избранное, «просмотрено», позиция после плеера. Экраны с карточками
+    /// перечитываются по его смене (`.task(id:)`), а не «при появлении»: с боковым меню при возврате из стека раздела
+    /// событие появления не приходит.
+    private(set) var viewerRevision = 0
+
+    /// Своё изменение состояния зрителя — экраны с карточками перечитаются, пока человек ещё на карточке.
+    func viewerChanged() { viewerRevision &+= 1 }
+
     /// Каталог текущего сервера; нет сессии — нет каталога.
     var catalog: Catalog? { session.map { Catalog(api: $0.api) } }
 

@@ -43,7 +43,8 @@ struct SearchView: View {
             }
         }
         .searchable(text: $text, prompt: Text("Название или описание"))
-        .task(id: text) { await search() }
+        // Результаты — и по своему изменению состояния зрителя (MF-116): сердечки и полосы после карточки.
+        .task(id: SearchKey(text: text, revision: app.viewerRevision)) { await search() }
         // Перечитать, когда ряд становится виден: стёрли текст или вернулись с карточки к пустой строке. На появление
         // экрана не полагаемся: с загрузкой «при появлении» ряд после возврата с карточки оставался прежним (MF-114,
         // найдено владельцем на ТВ, воспроизведено `testRecentsUpdatedAfterReturnAndClearingText`).
@@ -108,6 +109,12 @@ struct SearchView: View {
             if e.needsSignIn { await app.handle(e) } else { self.error = e }
         }
     }
+}
+
+/// Ключ перезапуска поиска: текст и номер версии состояния зрителя.
+private struct SearchKey: Hashable {
+    let text: String
+    let revision: Int
 }
 
 extension Catalog {

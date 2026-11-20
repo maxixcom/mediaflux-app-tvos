@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Главный экран — ленты (APPS.md §4): «Продолжить просмотр», «Недавно добавленные», «Избранное», по ленте на
-/// библиотеку, «Каналы». Пустые ленты не показываем. Возврат с карточки перечитывает ленты: избранное и
-/// «просмотрено» меняются там.
+/// библиотеку, «Каналы». Пустые ленты не показываем. Ленты перечитываются по своему изменению состояния зрителя
+/// (избранное, «просмотрено», позиция после плеера — MF-116), пока человек ещё на карточке.
 struct HomeView: View {
     var body: some View {
         Loadable(load: { try await $0.home() }, content: { data in
@@ -16,7 +16,7 @@ struct HomeView: View {
             } else {
                 rows(data)
             }
-        }, reloadOnAppear: true)
+        }, reloadOnViewerChange: true)
     }
 
     private func rows(_ data: HomeData) -> some View {
