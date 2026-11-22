@@ -34,7 +34,8 @@ extension DCAPI {
       ] }
 
       /// Подключить устройство. Повтор для той же установки обновляет запись и слот не тратит.
-      /// Ошибки: DEVICE_LIMIT_REACHED {limit}; DEVICE_REVOKED — это устройство отключено, нужен новый вход.
+      /// Ошибки: DEVICE_LIMIT_REACHED {limit}; DEVICE_REVOKED — это устройство отключено, нужен новый вход;
+      /// APPS_NOT_IN_TARIFF — приложения закрыты тарифом (тогда работают только `me` и `deviceRevoke`).
       var deviceRegister: DeviceRegister { __data["deviceRegister"] }
 
       /// DeviceRegister

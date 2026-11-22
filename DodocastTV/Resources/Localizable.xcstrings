@@ -316,6 +316,16 @@
         }
       }
     },
+    "Приложения не входят в ваш тариф. Условия — в личном кабинете.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps are not included in your plan. See the terms in your personal account."
+          }
+        }
+      }
+    },
     "Просмотр приостановлен: на балансе минус. Пополните баланс в личном кабинете.": {
       "extractionState": "stale",
       "localizations": {

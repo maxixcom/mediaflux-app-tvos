@@ -43,7 +43,7 @@ extension DCAPI {
           .field("id", DCAPI.ID.self),
           .field("name", String?.self),
           .field("email", String?.self),
-          .field("deviceLimit", Int.self),
+          .field("deviceLimit", Int?.self),
           .field("deliveryBlock", GraphQLEnum<DCAPI.DeliveryBlockReason>?.self),
           .field("device", Device?.self),
         ] }
@@ -54,8 +54,8 @@ extension DCAPI {
         var id: DCAPI.ID { __data["id"] }
         var name: String? { __data["name"] }
         var email: String? { __data["email"] }
-        /// Сколько устройств можно подключить.
-        var deviceLimit: Int { __data["deviceLimit"] }
+        /// Сколько устройств можно подключить по тарифу (DEVICE_COUNT); null — без ограничения.
+        var deviceLimit: Int? { __data["deviceLimit"] }
         /// Почему отдача владельца закрыта; null — открыта (или data-service не ответил — тогда решит стример).
         var deliveryBlock: GraphQLEnum<DCAPI.DeliveryBlockReason>? { __data["deliveryBlock"] }
         /// Устройство, с которого пришёл запрос; null — ещё не зарегистрировано (или отключено).

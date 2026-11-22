@@ -39,6 +39,8 @@ struct AppError: Error, Equatable, Sendable {
         case deliveryBlocked = "DELIVERY_BLOCKED"
         case channelOffAir = "CHANNEL_OFF_AIR"
         case channelsNotInTariff = "CHANNELS_NOT_IN_TARIFF"
+        /// Приложения закрыты тарифом (MF-91): работают только `me` и отключение устройства — экран проблемы с «Выйти».
+        case appsNotInTariff = "APPS_NOT_IN_TARIFF"
         case rateLimited = "RATE_LIMITED"
         case operationNotRegistered = "OPERATION_NOT_REGISTERED"
         case serverBusy = "SERVER_BUSY"
@@ -82,6 +84,7 @@ struct AppError: Error, Equatable, Sendable {
             }
         case .channelOffAir: String(localized: "Канал сейчас не в эфире.")
         case .channelsNotInTariff: String(localized: "Каналы не входят в ваш тариф.")
+        case .appsNotInTariff: String(localized: "Приложения не входят в ваш тариф. Условия — в личном кабинете.")
         case .rateLimited: String(localized: "Слишком много запросов. Повторите через \(params["retryAfterSeconds"] ?? "—") с.")
         case .serverBusy: String(localized: "Сервер перегружен. Повторите чуть позже.")
         case .platformNotSupported: String(localized: "Сервер не поддерживает Apple TV.")
