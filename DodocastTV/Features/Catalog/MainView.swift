@@ -175,7 +175,7 @@ struct Loadable<Value, Content: View>: View {
         } catch is CancellationError {
         } catch {
             let e = AppError.from(error)
-            if e.needsSignIn || e.is(.serverUnavailable) || e.is(.network) && value == nil {
+            if e.isAppWide || e.is(.serverUnavailable) || e.is(.network) && value == nil {
                 await app.handle(e)
             } else {
                 self.error = e

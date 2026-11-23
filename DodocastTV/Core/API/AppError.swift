@@ -56,6 +56,13 @@ struct AppError: Error, Equatable, Sendable {
         `is`(.signedOut) || `is`(.deviceRevoked) || `is`(.deviceNotRegistered)
     }
 
+    /// Ошибка всего приложения, а не одного экрана: экран отдаёт её в `AppModel.handle`. Кроме нового входа — приложения
+    /// сняты с тарифа (MF-91): работать не будет ни один раздел, и вместо «Повторить» в каждом нужен экран проблемы
+    /// с «Выйти».
+    var isAppWide: Bool {
+        needsSignIn || `is`(.appsNotInTariff)
+    }
+
     /// Фраза для человека (ru — исходный язык, en — в `Localizable.xcstrings`).
     var message: String {
         switch known {

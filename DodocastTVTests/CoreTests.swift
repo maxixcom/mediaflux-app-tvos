@@ -69,6 +69,14 @@ final class CoreTests: XCTestCase {
         XCTAssertFalse(AppError(.deviceLimitReached).needsSignIn)
     }
 
+    func testAppsNotInTariffLeavesScreenWithoutSignIn() {
+        // Приложения сняты с тарифа (MF-91): экран отдаёт ошибку наверх — экран проблемы с «Выйти», а вход не сбрасываем.
+        XCTAssertTrue(AppError(.appsNotInTariff).isAppWide)
+        XCTAssertFalse(AppError(.appsNotInTariff).needsSignIn)
+        XCTAssertTrue(AppError(.deviceRevoked).isAppWide)
+        XCTAssertFalse(AppError(.playbackFailed).isAppWide)
+    }
+
     func testGraphQLErrorExtensionsBecomeAppError() throws {
         // Как ошибка приходит от сервера: JSON → JSONObject, так же разбирает его Apollo.
         let body = #"{"message":"limit","extensions":{"code":"DEVICE_LIMIT_REACHED","params":{"limit":"3"}}}"#

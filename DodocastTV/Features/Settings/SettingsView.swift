@@ -97,7 +97,7 @@ struct SettingsView: View {
             } catch is CancellationError {
             } catch {
                 let e = AppError.from(error)
-                if e.needsSignIn { await app.handle(e) } else { searchError = e }
+                if e.isAppWide { await app.handle(e) } else { searchError = e }
             }
         }
     }
@@ -110,7 +110,7 @@ struct SettingsView: View {
         } catch is CancellationError {
         } catch {
             let e = AppError.from(error)
-            if e.needsSignIn { await app.handle(e) } else { self.error = e }
+            if e.isAppWide { await app.handle(e) } else { self.error = e }
         }
     }
 

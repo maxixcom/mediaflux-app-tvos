@@ -87,7 +87,7 @@ struct LibraryView: View {
         } catch is CancellationError {
         } catch {
             let e = AppError.from(error)
-            if e.needsSignIn { await app.handle(e) }
+            if e.isAppWide { await app.handle(e) }
         }
     }
 
@@ -107,7 +107,7 @@ struct LibraryView: View {
             error = nil
         } catch {
             let e = AppError.from(error)
-            if e.needsSignIn { await app.handle(e) } else { self.error = e }
+            if e.isAppWide { await app.handle(e) } else { self.error = e }
         }
     }
 }
@@ -222,7 +222,7 @@ struct FavoriteButton: View {
             } catch {
                 isOn = !new
                 let e = AppError.from(error)
-                if e.needsSignIn { await app.handle(e) }
+                if e.isAppWide { await app.handle(e) }
             }
         }
     }

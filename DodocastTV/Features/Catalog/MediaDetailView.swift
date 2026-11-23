@@ -110,7 +110,7 @@ private struct MediaDetailContent: View {
                 app.viewerChanged()
             } catch {
                 let e = AppError.from(error)
-                if e.needsSignIn { await app.handle(e) } else { self.error = e }
+                if e.isAppWide { await app.handle(e) } else { self.error = e }
             }
         }
     }

@@ -68,7 +68,7 @@ struct SearchView: View {
             } catch is CancellationError {
             } catch {
                 let e = AppError.from(error)
-                if e.needsSignIn { await app.handle(e) }
+                if e.isAppWide { await app.handle(e) }
             }
         }
     }
@@ -82,7 +82,7 @@ struct SearchView: View {
         } catch {
             // Ряд необязательный: при сбое просто не показываем его.
             let e = AppError.from(error)
-            if e.needsSignIn { await app.handle(e) }
+            if e.isAppWide { await app.handle(e) }
         }
     }
 
@@ -106,7 +106,7 @@ struct SearchView: View {
         } catch is CancellationError {
         } catch {
             let e = AppError.from(error)
-            if e.needsSignIn { await app.handle(e) } else { self.error = e }
+            if e.isAppWide { await app.handle(e) } else { self.error = e }
         }
     }
 }

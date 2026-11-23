@@ -33,7 +33,7 @@ struct PlayerView: View {
             let m = PlayerModel(request: request, catalog: catalog, sender: app.progressSender, description: description)
             model = m
             await m.begin()
-            if case let .failed(e) = m.state, e.needsSignIn {
+            if case let .failed(e) = m.state, e.isAppWide {
                 dismiss()
                 await app.handle(e)
             }
